@@ -1,6 +1,6 @@
 package httpdriver
 
-import "servermanager/src/httplib"
+import "server/src/httplib"
 
 type HTTPDriver struct {
 	httpLib httplib.HTTPLib

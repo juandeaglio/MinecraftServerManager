@@ -1,8 +1,8 @@
-package server_tests
+package httpdrivertests
 
 import (
-	"servermanager/src/httpdriver"
-	"servermanager/src/httplib"
+	"server/src/httpdriver"
+	"server/src/httplib"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,6 +11,5 @@ import (
 func TestDefineHTTPDriver(t *testing.T) {
 	mockClient := httplib.NewMockHTTPLib()
 	driver := httpdriver.NewHTTPDriver(mockClient)
-
 	assert.NotNil(t, driver)
 }
