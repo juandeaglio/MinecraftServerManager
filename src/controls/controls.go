@@ -1,7 +1,7 @@
 package controls
 
 import (
-	"server/src/systeminterface"
+	remoteconnection "server/src/remoteconnection"
 )
 
 type Server interface {
@@ -12,23 +12,27 @@ type Server interface {
 }
 
 type MinecraftServer struct {
-	systemInterface systeminterface.SystemInterface
+	rcon remoteconnection.RemoteConnection
 }
 
-func (s *MinecraftServer) GetStatus() bool {
-	return s.systemInterface.PollExecutable()
+func (m *MinecraftServer) IsAvailable(num int) bool {
+	return m.rcon.IsAvailable(num)
 }
 
-func (s *MinecraftServer) Start() {
-
-}
-func (s *MinecraftServer) Stop() {
-
-}
-func (s *MinecraftServer) Restart() {
-
+func (m *MinecraftServer) GetStatus() bool {
+	return m.rcon.PollServer()
 }
 
-func NewServer(inter systeminterface.SystemInterface) *MinecraftServer {
-	return &MinecraftServer{systemInterface: inter}
+func (m *MinecraftServer) Start() {
+
+}
+func (m *MinecraftServer) Stop() {
+
+}
+func (m *MinecraftServer) Restart() {
+
+}
+
+func NewServer(inter remoteconnection.RemoteConnection) *MinecraftServer {
+	return &MinecraftServer{rcon: inter}
 }
