@@ -1,6 +1,6 @@
 package remoteconnection
 
 type RemoteConnection interface {
-	PollServer() bool
+	PollServer() StatusResponse
 	IsAvailable(portNum int) bool
 }

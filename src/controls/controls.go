@@ -19,7 +19,7 @@ func (m *MinecraftServer) IsAvailable(num int) bool {
 	return m.rcon.IsAvailable(num)
 }
 
-func (m *MinecraftServer) GetStatus() bool {
+func (m *MinecraftServer) GetStatus() remoteconnection.StatusResponse {
 	return m.rcon.PollServer()
 }
 
