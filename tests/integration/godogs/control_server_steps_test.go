@@ -24,17 +24,17 @@ func (c *controlServerFeature) theServerIsRunningOnPort(port int) error {
 
 // When step: poll for the process.
 func (c *controlServerFeature) iQueryThePort() error {
-	c.connection = mockremoteconnection.NewMockRemoteConnection(25565)
+	c.connection = mockremoteconnection.NewMockRemoteConnection(c.portNum)
 	c.portStatus = c.connection.IsAvailable()
+	return nil
+}
+
+// Then step: assert that the process was found.
+func (c *controlServerFeature) iShouldSeeAResponseFromTheServer() error {
 	if c.portStatus != false {
 		return nil
 	}
 	return errors.New("failed to query the port: server status is false")
-}
-
-// Then step: assert that the process was found.
-func (c *controlServerFeature) iShouldSeeThatAResponseFromTheServer() error {
-	return nil
 }
 
 func TestFeatures(t *testing.T) {
@@ -59,5 +59,5 @@ func FeatureContext(s *godog.ScenarioContext) {
 	// Register each of the steps defined in the feature file
 	s.Given(`the server is running RCON on port (\d+)`, c.theServerIsRunningOnPort)
 	s.When(`^I query the port$`, c.iQueryThePort)
-	s.Step(`^I should see that a response from the server$`, c.iShouldSeeThatAResponseFromTheServer)
+	s.Step(`^I should see that a response from the server$`, c.iShouldSeeAResponseFromTheServer)
 }
