@@ -1,15 +1,9 @@
-package controls
+package mcservercontrols
 
 import (
 	remoteconnection "server/src/remoteconnection"
+	server "server/src/server"
 )
-
-type Server interface {
-	Start()
-	Stop()
-	Restart()
-	GetStatus() bool
-}
 
 type MinecraftServer struct {
 	rcon remoteconnection.RemoteConnection
@@ -36,3 +30,5 @@ func (m *MinecraftServer) Restart() {
 func NewServer(inter remoteconnection.RemoteConnection) *MinecraftServer {
 	return &MinecraftServer{rcon: inter}
 }
+
+var _ server.Server = (*MinecraftServer)(nil)
