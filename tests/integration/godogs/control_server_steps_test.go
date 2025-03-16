@@ -2,8 +2,8 @@ package main
 
 import (
 	"errors"
-	"server/src/remoteconnection"
-	"server/src/remoteconnection/mockremoteconnection"
+	"minecraftremote/src/remoteconnection"
+	"minecraftremote/src/remoteconnection/mockremoteconnection"
 	"testing"
 
 	"github.com/cucumber/godog"

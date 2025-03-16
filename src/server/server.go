@@ -1,7 +1,7 @@
 package mcservercontrols
 
 import (
-	remoteconnection "server/src/remoteconnection"
+	remoteconnection "minecraftremote/src/remoteconnection"
 )
 
 type Server interface {

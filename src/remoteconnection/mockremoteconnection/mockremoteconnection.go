@@ -2,7 +2,7 @@ package mockremoteconnection
 
 import (
 	"math/rand"
-	"server/src/remoteconnection"
+	"minecraftremote/src/remoteconnection"
 )
 
 type MockStatusResponse struct {

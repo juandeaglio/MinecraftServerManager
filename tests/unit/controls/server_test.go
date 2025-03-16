@@ -1,8 +1,8 @@
 package servertest
 
 import (
-	"server/src/remoteconnection/mockremoteconnection"
-	"server/src/server/mcservercontrols"
+	"minecraftremote/src/remoteconnection/mockremoteconnection"
+	"minecraftremote/src/server/mcservercontrols"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

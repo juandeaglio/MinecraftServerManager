@@ -1,8 +1,8 @@
 package mcservercontrols
 
 import (
-	remoteconnection "server/src/remoteconnection"
-	server "server/src/server"
+	remoteconnection "minecraftremote/src/remoteconnection"
+	server "minecraftremote/src/server"
 )
 
 type MinecraftServer struct {

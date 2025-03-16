@@ -1,8 +1,8 @@
 package httpdrivertests
 
 import (
-	"server/src/httpdriver"
-	"server/src/httplib"
+	"minecraftremote/src/httpdriver"
+	"minecraftremote/src/httplib"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

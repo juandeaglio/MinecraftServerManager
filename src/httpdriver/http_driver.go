@@ -1,6 +1,6 @@
 package httpdriver
 
-import "server/src/httplib"
+import "minecraftremote/src/httplib"
 
 type HTTPDriver struct {
 	httpLib httplib.HTTPLib
