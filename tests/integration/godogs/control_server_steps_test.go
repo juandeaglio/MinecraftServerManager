@@ -1,7 +1,7 @@
 package main
 
 import (
-	"errors"
+	"fmt"
 	"minecraftremote/src/remoteconnection"
 	"minecraftremote/src/remoteconnection/mockremoteconnection"
 	"testing"
@@ -10,31 +10,31 @@ import (
 )
 
 // processFeature acts as our test fixture holding any shared state.
-type controlServerFeature struct {
+type checkServerFeature struct {
 	portStatus bool
 	portNum    int
 	connection remoteconnection.RemoteConnection
 }
 
-// Given step: set up the process name.
-func (c *controlServerFeature) theServerIsRunningOnPort(port int) error {
+// Given step: Define the port where the server is running.
+func (c *checkServerFeature) theServerIsRunningOnPort(port int) error {
 	c.portNum = port
 	return nil
 }
 
 // When step: poll for the process.
-func (c *controlServerFeature) iQueryThePort() error {
+func (c *checkServerFeature) iQueryThePort() error {
 	c.connection = mockremoteconnection.NewMockRemoteConnection(c.portNum)
 	c.portStatus = c.connection.IsAvailable()
 	return nil
 }
 
 // Then step: assert that the process was found.
-func (c *controlServerFeature) iShouldSeeAResponseFromTheServer() error {
+func (c *checkServerFeature) iShouldSeeAResponseFromTheServer() error {
 	if c.portStatus {
 		return nil
 	}
-	return errors.New("failed to query the port: server status is false")
+	return fmt.Errorf("server on port %d is unavailable", c.portNum)
 }
 
 func TestFeatures(t *testing.T) {
@@ -54,8 +54,8 @@ func TestFeatures(t *testing.T) {
 }
 
 func CheckServerRunningFeature(s *godog.ScenarioContext) {
-	c := &controlServerFeature{}
+	c := &checkServerFeature{}
 	s.Given(`the server is running RCON on port (\d+)`, c.theServerIsRunningOnPort)
 	s.When(`^I query the port$`, c.iQueryThePort)
-	s.Then(`^I should see that a response from the server$`, c.iShouldSeeAResponseFromTheServer)
+	s.Then(`^I should see a response from the server$`, c.iShouldSeeAResponseFromTheServer)
 }
