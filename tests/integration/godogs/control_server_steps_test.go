@@ -59,5 +59,5 @@ func FeatureContext(s *godog.ScenarioContext) {
 	// Register each of the steps defined in the feature file
 	s.Given(`the server is running RCON on port (\d+)`, c.theServerIsRunningOnPort)
 	s.When(`^I query the port$`, c.iQueryThePort)
-	s.Step(`^I should see that a response from the server$`, c.iShouldSeeAResponseFromTheServer)
+	s.Then(`^I should see that a response from the server$`, c.iShouldSeeAResponseFromTheServer)
 }
