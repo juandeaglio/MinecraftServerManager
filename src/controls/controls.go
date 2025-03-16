@@ -15,8 +15,8 @@ type MinecraftServer struct {
 	rcon remoteconnection.RemoteConnection
 }
 
-func (m *MinecraftServer) IsAvailable(num int) bool {
-	return m.rcon.IsAvailable(num)
+func (m *MinecraftServer) IsAvailable() bool {
+	return m.rcon.IsAvailable()
 }
 
 func (m *MinecraftServer) GetStatus() remoteconnection.StatusResponse {

@@ -9,17 +9,17 @@ import (
 )
 
 func TestServerAvailableWhileActive(t *testing.T) {
-	manager := controls.NewServer(mockremoteconnection.NewMockRemoteConnection())
-	assert.Truef(t, manager.IsAvailable(25565), "The server should be enabled here, but the manager says it is inactive.")
+	manager := controls.NewServer(mockremoteconnection.NewMockRemoteConnection(25565))
+	assert.Truef(t, manager.IsAvailable(), "The server should be enabled here, but the manager says it is inactive.")
 }
 
 func TestServerAvailableWhileOff(t *testing.T) {
-	manager := controls.NewServer(mockremoteconnection.NewMockRemoteConnection())
-	assert.Falsef(t, manager.IsAvailable(25560), "The server should be disabled here, but the manager says it is active.")
+	manager := controls.NewServer(mockremoteconnection.NewMockRemoteConnection(25560))
+	assert.Falsef(t, manager.IsAvailable(), "The server should be disabled here, but the manager says it is active.")
 }
 
-func TestServerStatus(t *testing.T) {
-	manager := controls.NewServer(mockremoteconnection.NewMockRemoteConnection())
+func TestServerWhileRunningStatus(t *testing.T) {
+	manager := controls.NewServer(mockremoteconnection.NewMockRemoteConnection(25565))
 	actual := manager.GetStatus()
 	assert.NotNil(t, actual)
 	expected := 0

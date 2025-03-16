@@ -24,8 +24,8 @@ func (c *controlServerFeature) theServerIsRunningOnPort(port int) error {
 
 // When step: poll for the process.
 func (c *controlServerFeature) iQueryThePort() error {
-	c.connection = mockremoteconnection.NewMockRemoteConnection()
-	c.portStatus = c.connection.IsAvailable(c.portNum)
+	c.connection = mockremoteconnection.NewMockRemoteConnection(25565)
+	c.portStatus = c.connection.IsAvailable()
 	if c.portStatus != false {
 		return nil
 	}

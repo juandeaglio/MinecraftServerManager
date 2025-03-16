@@ -18,18 +18,19 @@ func NewMockStatusResponse() *MockStatusResponse {
 }
 
 type MockRemoteConnection struct {
+	portNum int
 }
 
-func (m *MockRemoteConnection) IsAvailable(portNum int) bool {
-	return portNum == 25565
+func (m *MockRemoteConnection) IsAvailable() bool {
+	return m.portNum == 25565
 }
 
 func (m *MockRemoteConnection) PollServer() remoteconnection.StatusResponse {
 	return NewMockStatusResponse()
 }
 
-func NewMockRemoteConnection() *MockRemoteConnection {
-	return &MockRemoteConnection{}
+func NewMockRemoteConnection(portNum int) *MockRemoteConnection {
+	return &MockRemoteConnection{portNum: portNum}
 }
 
 var _ remoteconnection.RemoteConnection = (*MockRemoteConnection)(nil)
