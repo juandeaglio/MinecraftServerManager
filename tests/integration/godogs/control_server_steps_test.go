@@ -31,7 +31,7 @@ func (c *controlServerFeature) iQueryThePort() error {
 
 // Then step: assert that the process was found.
 func (c *controlServerFeature) iShouldSeeAResponseFromTheServer() error {
-	if c.portStatus != false {
+	if c.portStatus {
 		return nil
 	}
 	return errors.New("failed to query the port: server status is false")
@@ -39,11 +39,12 @@ func (c *controlServerFeature) iShouldSeeAResponseFromTheServer() error {
 
 func TestFeatures(t *testing.T) {
 	suite := godog.TestSuite{
-		ScenarioInitializer: FeatureContext,
+		ScenarioInitializer: CheckServerRunningFeature,
 		Options: &godog.Options{
 			Format:   "pretty",
 			Paths:    []string{"features"},
-			TestingT: t, // Testing instance that will run subtests.
+			TestingT: t,
+			Strict:   true,
 		},
 	}
 
@@ -52,11 +53,8 @@ func TestFeatures(t *testing.T) {
 	}
 }
 
-// FeatureContext registers the step definitions with Godog.
-func FeatureContext(s *godog.ScenarioContext) {
+func CheckServerRunningFeature(s *godog.ScenarioContext) {
 	c := &controlServerFeature{}
-
-	// Register each of the steps defined in the feature file
 	s.Given(`the server is running RCON on port (\d+)`, c.theServerIsRunningOnPort)
 	s.When(`^I query the port$`, c.iQueryThePort)
 	s.Then(`^I should see that a response from the server$`, c.iShouldSeeAResponseFromTheServer)
