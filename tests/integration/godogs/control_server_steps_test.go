@@ -9,7 +9,6 @@ import (
 	"github.com/cucumber/godog"
 )
 
-// processFeature acts as our test fixture holding any shared state.
 type checkServerFeature struct {
 	portStatus bool
 	portNum    int
@@ -39,7 +38,9 @@ func (c *checkServerFeature) iShouldSeeAResponseFromTheServer() error {
 
 func TestFeatures(t *testing.T) {
 	suite := godog.TestSuite{
-		ScenarioInitializer: CheckServerRunningFeature,
+		ScenarioInitializer: func(s *godog.ScenarioContext) {
+			CheckServerRunningFeatureContext(s)
+		},
 		Options: &godog.Options{
 			Format:   "pretty",
 			Paths:    []string{"features"},
@@ -53,7 +54,7 @@ func TestFeatures(t *testing.T) {
 	}
 }
 
-func CheckServerRunningFeature(s *godog.ScenarioContext) {
+func CheckServerRunningFeatureContext(s *godog.ScenarioContext) {
 	c := &checkServerFeature{}
 	s.Given(`the server is running RCON on port (\d+)`, c.theServerIsRunningOnPort)
 	s.When(`^I query the port$`, c.iQueryThePort)
