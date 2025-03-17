@@ -37,9 +37,16 @@ func (c *checkServerFeature) iShouldSeeAResponseFromTheServer() error {
 }
 
 func TestFeatures(t *testing.T) {
+	suite := runFeature(t, CheckServerRunningFeatureContext)
+	if suite.Run() != 0 {
+		t.Fatal("non-zero status returned, failed to run feature tests")
+	}
+}
+
+func runFeature(t *testing.T, scenarioFeature func(*godog.ScenarioContext)) godog.TestSuite {
 	suite := godog.TestSuite{
 		ScenarioInitializer: func(s *godog.ScenarioContext) {
-			CheckServerRunningFeatureContext(s)
+			scenarioFeature(s)
 		},
 		Options: &godog.Options{
 			Format:   "pretty",
@@ -48,10 +55,7 @@ func TestFeatures(t *testing.T) {
 			Strict:   true,
 		},
 	}
-
-	if suite.Run() != 0 {
-		t.Fatal("non-zero status returned, failed to run feature tests")
-	}
+	return suite
 }
 
 func CheckServerRunningFeatureContext(s *godog.ScenarioContext) {
