@@ -1,12 +1,9 @@
 package mcservercontrols
 
-import (
-	remoteconnection "minecraftremote/src/remoteconnection"
-)
+import "net/http"
 
 type Server interface {
-	Start()
-	Stop()
-	Restart()
-	GetStatus() remoteconnection.StatusResponse
+	Start() bool
+	Stop() bool
+	HandleHttp(*http.Request) *http.Response
 }

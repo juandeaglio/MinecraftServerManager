@@ -1,7 +1,6 @@
 package main
 
 import (
-	"minecraftremote/src/remoteconnection/stubremoteconnection"
 	"minecraftremote/src/server/mcservercontrols"
 	"testing"
 
@@ -12,13 +11,13 @@ type checkServerFeature struct {
 	mc mcservercontrols.MinecraftServer
 }
 
-func (c *checkServerFeature) theClientAsksTheServerIfItsThere() error {
-	conn := stubremoteconnection.NewMockRemoteConnection(25565).IsAvailable()
-	c.mc = *mcservercontrols.NewServer(conn)
+func (c *checkServerFeature) theServerIsStarted() error {
+	c.mc = *mcservercontrols.NewServer()
+	c.mc.Start()
 	return nil
 }
 
-func (c *checkServerFeature) iReceiveTheClientsRequest() error {
+func (c *checkServerFeature) aClientAsksTheStatus() error {
 	return godog.ErrPending
 }
 
@@ -50,7 +49,7 @@ func runFeature(t *testing.T, scenarioFeature func(*godog.ScenarioContext)) godo
 
 func CheckServerRunningFeatureContext(s *godog.ScenarioContext) {
 	c := &checkServerFeature{}
-	s.Given(`the client asks the server if it's there`, c.theClientAsksTheServerIfItsThere)
-	s.When(`I receive the client's request`, c.iReceiveTheClientsRequest)
+	s.Given(`the server is started`, c.theServerIsStarted)
+	s.When(`a client asks the status`, c.aClientAsksTheStatus)
 	s.Then(`I should see a response from the server`, c.iShouldSeeAResponseFromTheServer)
 }

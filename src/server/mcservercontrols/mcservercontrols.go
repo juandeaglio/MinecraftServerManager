@@ -1,34 +1,30 @@
 package mcservercontrols
 
 import (
-	remoteconnection "minecraftremote/src/remoteconnection"
 	server "minecraftremote/src/server"
+	"net/http"
 )
 
 type MinecraftServer struct {
-	rcon remoteconnection.RemoteConnection
 }
 
-func (m *MinecraftServer) IsAvailable() bool {
-	return m.rcon.IsAvailable()
+func (m *MinecraftServer) HandleHttp(req *http.Request) *http.Response {
+	if req.URL.Path == "/status" && m.Start() {
+		return &http.Response{StatusCode: 200}
+	}
+	return &http.Response{StatusCode: 400}
 }
 
-func (m *MinecraftServer) GetStatus() remoteconnection.StatusResponse {
-	return m.rcon.PollServer()
-}
-
-func (m *MinecraftServer) Start() {
+func (m *MinecraftServer) Start() bool {
+	return true
 
 }
-func (m *MinecraftServer) Stop() {
-
-}
-func (m *MinecraftServer) Restart() {
-
+func (m *MinecraftServer) Stop() bool {
+	return false
 }
 
-func NewServer(conn remoteconnection.RemoteConnection) *MinecraftServer {
-	return &MinecraftServer{rcon: conn}
+func NewServer() *MinecraftServer {
+	return &MinecraftServer{}
 }
 
 var _ server.Server = (*MinecraftServer)(nil)

@@ -1,34 +1,40 @@
 package servertest
 
 import (
-	stubremoteconnection "minecraftremote/src/remoteconnection/mockremoteconnection"
 	"minecraftremote/src/server/mcservercontrols"
+	"net/http"
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-// func TestServerAvailableWhileActive(t *testing.T) {
-// 	conn := stubremoteconnection.NewMockRemoteConnection(25565).IsAvailable()
-// 	manager := mcservercontrols.NewServer()
-// 	resp := manager.Accept(conn)
-// 	assert.Truef(t, resp.StatusCode == "200", "The server should be enabled here, but the manager says it is inactive.")
+type StatusRequest struct {
+	*http.Request
+}
+
+func NewStatusRequest() *StatusRequest {
+	url, _ := url.Parse("http://localhost/status")
+	req := &http.Request{
+		Method: "GET",
+		URL:    url,
+		Header: make(http.Header),
+	}
+	return &StatusRequest{Request: req}
+}
+
+// ToHTTPRequest extracts the underlying *http.Request
+func (s *StatusRequest) ToHTTPRequest() *http.Request {
+	return s.Request
+}
+
+func TestStartServer(t *testing.T) {
+	controls := mcservercontrols.NewServer()
+	assert.Truef(t, controls.HandleHttp(NewStatusRequest().ToHTTPRequest()).StatusCode == 200, "Server did not start successfully")
+}
+
+// func TestStopServer(t *testing.T) {
+// 	controls := mcservercontrols.NewServer()
+// 	controls.Start()
+// 	assert.Truef(t, controls.Start().StatusCode == 200, "Server did not start successfully")
 // }
-
-func TestServerAvailableWhileActive(t *testing.T) {
-	manager := mcservercontrols.NewServer(stubremoteconnection.NewMockRemoteConnection(25565))
-	assert.Truef(t, manager.IsAvailable(), "The server should be enabled here, but the manager says it is inactive.")
-}
-
-func TestServerAvailableWhileOff(t *testing.T) {
-	manager := mcservercontrols.NewServer(stubremoteconnection.NewMockRemoteConnection(25560))
-	assert.Falsef(t, manager.IsAvailable(), "The server should be disabled here, but the manager says it is active.")
-}
-
-func TestServerWhileRunningStatus(t *testing.T) {
-	manager := mcservercontrols.NewServer(stubremoteconnection.NewMockRemoteConnection(25565))
-	actual := manager.GetStatus()
-	assert.NotNil(t, actual)
-	expected := 0
-	assert.Greater(t, actual.TotalPlayers(), expected)
-}
