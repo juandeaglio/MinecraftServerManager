@@ -1,7 +1,7 @@
 package servertest
 
 import (
-	"minecraftremote/src/remoteconnection/mockremoteconnection"
+	stubremoteconnection "minecraftremote/src/remoteconnection/mockremoteconnection"
 	"minecraftremote/src/server/mcservercontrols"
 	"testing"
 
@@ -16,17 +16,17 @@ import (
 // }
 
 func TestServerAvailableWhileActive(t *testing.T) {
-	manager := mcservercontrols.NewServer(mockremoteconnection.NewMockRemoteConnection(25565))
+	manager := mcservercontrols.NewServer(stubremoteconnection.NewMockRemoteConnection(25565))
 	assert.Truef(t, manager.IsAvailable(), "The server should be enabled here, but the manager says it is inactive.")
 }
 
 func TestServerAvailableWhileOff(t *testing.T) {
-	manager := mcservercontrols.NewServer(mockremoteconnection.NewMockRemoteConnection(25560))
+	manager := mcservercontrols.NewServer(stubremoteconnection.NewMockRemoteConnection(25560))
 	assert.Falsef(t, manager.IsAvailable(), "The server should be disabled here, but the manager says it is active.")
 }
 
 func TestServerWhileRunningStatus(t *testing.T) {
-	manager := mcservercontrols.NewServer(mockremoteconnection.NewMockRemoteConnection(25565))
+	manager := mcservercontrols.NewServer(stubremoteconnection.NewMockRemoteConnection(25565))
 	actual := manager.GetStatus()
 	assert.NotNil(t, actual)
 	expected := 0
