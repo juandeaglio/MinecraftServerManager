@@ -1,39 +1,29 @@
 package main
 
 import (
-	"fmt"
-	"minecraftremote/src/remoteconnection"
-	"minecraftremote/src/remoteconnection/mockremoteconnection"
+	"minecraftremote/src/remoteconnection/stubremoteconnection"
+	"minecraftremote/src/server/mcservercontrols"
 	"testing"
 
 	"github.com/cucumber/godog"
 )
 
 type checkServerFeature struct {
-	portStatus bool
-	portNum    int
-	connection remoteconnection.RemoteConnection
+	mc mcservercontrols.MinecraftServer
 }
 
-// Given step: Define the port where the server is running.
-func (c *checkServerFeature) theServerIsRunningOnPort(port int) error {
-	c.portNum = port
+func (c *checkServerFeature) theClientAsksTheServerIfItsThere() error {
+	conn := stubremoteconnection.NewMockRemoteConnection(25565).IsAvailable()
+	c.mc = *mcservercontrols.NewServer(conn)
 	return nil
 }
 
-// When step: poll for the process.
-func (c *checkServerFeature) iQueryThePort() error {
-	c.connection = mockremoteconnection.NewMockRemoteConnection(c.portNum)
-	c.portStatus = c.connection.IsAvailable()
-	return nil
+func (c *checkServerFeature) iReceiveTheClientsRequest() error {
+	return godog.ErrPending
 }
 
-// Then step: assert that the process was found.
 func (c *checkServerFeature) iShouldSeeAResponseFromTheServer() error {
-	if c.portStatus {
-		return nil
-	}
-	return fmt.Errorf("server on port %d is unavailable", c.portNum)
+	return godog.ErrPending
 }
 
 func TestFeatures(t *testing.T) {
@@ -60,7 +50,7 @@ func runFeature(t *testing.T, scenarioFeature func(*godog.ScenarioContext)) godo
 
 func CheckServerRunningFeatureContext(s *godog.ScenarioContext) {
 	c := &checkServerFeature{}
-	s.Given(`the server is running RCON on port (\d+)`, c.theServerIsRunningOnPort)
-	s.When(`^I query the port$`, c.iQueryThePort)
-	s.Then(`^I should see a response from the server$`, c.iShouldSeeAResponseFromTheServer)
+	s.Given(`the client asks the server if it's there`, c.theClientAsksTheServerIfItsThere)
+	s.When(`I receive the client's request`, c.iReceiveTheClientsRequest)
+	s.Then(`I should see a response from the server`, c.iShouldSeeAResponseFromTheServer)
 }

@@ -27,8 +27,8 @@ func (m *MinecraftServer) Restart() {
 
 }
 
-func NewServer(inter remoteconnection.RemoteConnection) *MinecraftServer {
-	return &MinecraftServer{rcon: inter}
+func NewServer(conn remoteconnection.RemoteConnection) *MinecraftServer {
+	return &MinecraftServer{rcon: conn}
 }
 
 var _ server.Server = (*MinecraftServer)(nil)

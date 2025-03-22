@@ -5,11 +5,11 @@ import (
 	"minecraftremote/src/httplib"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDefineHTTPDriver(t *testing.T) {
 	mockClient := httplib.NewMockHTTPLib()
 	driver := httpdriver.NewHTTPDriver(mockClient)
-	assert.NotNil(t, driver)
+	require.NotNil(t, driver)
 }

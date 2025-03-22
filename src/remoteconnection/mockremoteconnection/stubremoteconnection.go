@@ -1,4 +1,4 @@
-package mockremoteconnection
+package stubremoteconnection
 
 import (
 	"math/rand"
