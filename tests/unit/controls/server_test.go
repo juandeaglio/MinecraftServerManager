@@ -2,39 +2,68 @@ package servertest
 
 import (
 	"minecraftremote/src/server/mcservercontrols"
-	"net/http"
-	"net/url"
+	"minecraftremote/tests/unit/httpdriver/cannedrequests"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-type StatusRequest struct {
-	*http.Request
+// TestSuite struct holds the MinecraftServer instance
+type TestSuite struct {
+	controls *mcservercontrols.MinecraftServer
 }
 
-func NewStatusRequest() *StatusRequest {
-	url, _ := url.Parse("http://localhost/status")
-	req := &http.Request{
-		Method: "GET",
-		URL:    url,
-		Header: make(http.Header),
+// setup initializes a fresh MinecraftServer instance for each test
+func (ts *TestSuite) setup() {
+	ts.controls = mcservercontrols.NewServer()
+}
+
+func TestMain(m *testing.M) {
+	// Run all tests
+	code := m.Run()
+	os.Exit(code)
+}
+
+type TestCase struct {
+	name string
+	test func(t *testing.T, ts *TestSuite)
+}
+
+func TestMinecraftServer(t *testing.T) {
+	// Create a single test suite instance
+	suite := &TestSuite{}
+
+	// Define test cases
+	tests := []TestCase{
+		{
+			name: "StartServer",
+			test: func(t *testing.T, ts *TestSuite) {
+				resp := ts.controls.HandleHttp(cannedrequests.NewStartRequest().ToHTTPRequest())
+				assert.Equal(t, 200, resp.StatusCode, "Server did not start successfully")
+			},
+		},
+		{
+			name: "StopServer",
+			test: func(t *testing.T, ts *TestSuite) {
+				ts.controls.HandleHttp(cannedrequests.NewStartRequest().ToHTTPRequest())
+				resp := ts.controls.HandleHttp(cannedrequests.NewStopRequest().ToHTTPRequest())
+				assert.Equal(t, 200, resp.StatusCode, "Server did not stop successfully, maybe it did not start?")
+			},
+		},
+		{
+			name: "ServerStatistics",
+			test: func(t *testing.T, ts *TestSuite) {
+				// Implement the test logic here
+			},
+		},
 	}
-	return &StatusRequest{Request: req}
-}
 
-// ToHTTPRequest extracts the underlying *http.Request
-func (s *StatusRequest) ToHTTPRequest() *http.Request {
-	return s.Request
+	// Run each test case in a subtest
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			suite.setup() // Fresh instance for each test case
+			tc.test(t, suite)
+		})
+	}
 }
-
-func TestStartServer(t *testing.T) {
-	controls := mcservercontrols.NewServer()
-	assert.Truef(t, controls.HandleHttp(NewStatusRequest().ToHTTPRequest()).StatusCode == 200, "Server did not start successfully")
-}
-
-// func TestStopServer(t *testing.T) {
-// 	controls := mcservercontrols.NewServer()
-// 	controls.Start()
-// 	assert.Truef(t, controls.Start().StatusCode == 200, "Server did not start successfully")
-// }
