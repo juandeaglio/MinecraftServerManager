@@ -5,5 +5,10 @@ import "net/http"
 type Server interface {
 	Start() bool
 	Stop() bool
-	HandleHttp(*http.Request) *http.Response
+	HandleHTTP(*http.Request) *http.Response
+	Status() *Status
+}
+
+type Status struct {
+	Players int
 }

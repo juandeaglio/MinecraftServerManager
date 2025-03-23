@@ -5,31 +5,41 @@ import (
 	"net/url"
 )
 
-type StatusRequest struct {
+type ServerRequest struct {
 	*http.Request
 }
 
-func NewStartRequest() *StatusRequest {
+func NewStartRequest() *ServerRequest {
 	url, _ := url.Parse("http://localhost/start")
 	req := &http.Request{
 		Method: "GET",
 		URL:    url,
 		Header: make(http.Header),
 	}
-	return &StatusRequest{Request: req}
+	return &ServerRequest{Request: req}
 }
 
-func NewStopRequest() *StatusRequest {
+func NewStopRequest() *ServerRequest {
 	url, _ := url.Parse("http://localhost/stop")
 	req := &http.Request{
 		Method: "GET",
 		URL:    url,
 		Header: make(http.Header),
 	}
-	return &StatusRequest{Request: req}
+	return &ServerRequest{Request: req}
+}
+
+func NewStatusRequest() *ServerRequest {
+	url, _ := url.Parse("http://localhost/status")
+	req := &http.Request{
+		Method: "GET",
+		URL:    url,
+		Header: make(http.Header),
+	}
+	return &ServerRequest{Request: req}
 }
 
 // ToHTTPRequest extracts the underlying *http.Request
-func (s *StatusRequest) ToHTTPRequest() *http.Request {
+func (s *ServerRequest) ToHTTPRequest() *http.Request {
 	return s.Request
 }
