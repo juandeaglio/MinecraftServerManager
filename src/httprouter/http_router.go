@@ -82,11 +82,14 @@ func (h *HTTPServer) handleStatus(req *http.Request) *http.Response {
 		}
 	}
 
-	return &http.Response{
+	resp := &http.Response{
 		StatusCode: 200,
 		Status:     "OK",
+		Header:     http.Header{},
 		Body:       io.NopCloser(bytes.NewReader(body)),
 	}
+	resp.Header.Set("Content-Type", "application/json")
+	return resp
 }
 
 var _ HTTPRouter = (*HTTPServer)(nil)

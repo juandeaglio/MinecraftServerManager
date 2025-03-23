@@ -1,12 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"minecraftremote/src/controls/mcservercontrols"
 	"minecraftremote/src/httprouter"
 	"minecraftremote/src/httprouteradapter"
 	"net/http"
+	"strings"
 	"testing"
 	"time"
 
@@ -16,7 +19,10 @@ import (
 type checkServerFeature struct {
 	router *httprouter.HTTPServer
 	server *http.Server
+	resp   *http.Response
 }
+
+const statusURL = "http://localhost:8080/status"
 
 func (c *checkServerFeature) theServerIsStarted() error {
 	controls := mcservercontrols.NewControls()
@@ -24,16 +30,49 @@ func (c *checkServerFeature) theServerIsStarted() error {
 	c.router = httprouter.NewHTTPServer(controls)
 	routerAdapter := &httprouteradapter.HTTPRouterAdapter{Router: c.router}
 	c.server = startServerWithRouter(routerAdapter)
-	return waitForServerReady("http://localhost:8080/status", 5*time.Second)
+	return waitForServerReady(statusURL, 5*time.Second)
 }
 
 func (c *checkServerFeature) aClientAsksTheStatus() error {
-
-	return godog.ErrPending
+	c.resp, _ = http.Get(statusURL)
+	statusCode := c.resp.StatusCode
+	if statusCode == 200 {
+		return nil
+	}
+	return fmt.Errorf("The client was unable to get the status correctly")
 }
 
 func (c *checkServerFeature) iShouldTellTheClientTheStatus() error {
-	return godog.ErrPending
+	// First, check if the content type is application/json
+	contentType := c.resp.Header.Get("Content-Type")
+	if !strings.Contains(contentType, "application/json") {
+		return fmt.Errorf("expected content type to be application/json but got %s", contentType)
+	}
+
+	// Read response body
+	defer c.resp.Body.Close()
+	body, err := io.ReadAll(c.resp.Body)
+	if err != nil {
+		return fmt.Errorf("error reading response body: %v", err)
+	}
+
+	// Parse JSON response
+	var response map[string]interface{}
+	if err := json.Unmarshal(body, &response); err != nil {
+		return fmt.Errorf("error parsing JSON response: %v", err)
+	}
+
+	// Check if the 'Players' field exists
+	players := response["Players"]
+
+	// Check if Players value is 0
+	playersValue, _ := players.(float64) // JSON numbers are parsed as float64 by default
+
+	if playersValue != 0 {
+		return fmt.Errorf("expected 'Players' value to be 0 but got %v", playersValue)
+	}
+
+	return nil
 }
 
 func TestFeatures(t *testing.T) {

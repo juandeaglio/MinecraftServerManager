@@ -9,7 +9,11 @@ type MinecraftServer struct {
 }
 
 func (m *MinecraftServer) Status() *server.Status {
-	return &server.Status{Players: 1}
+	return &server.Status{Players: m.getPlayers()}
+}
+
+func (m *MinecraftServer) getPlayers() int {
+	return 0
 }
 
 func (m *MinecraftServer) Start() bool {
