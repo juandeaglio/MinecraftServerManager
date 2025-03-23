@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"minecraftremote/src/controls/mcservercontrols"
 	"minecraftremote/src/httprouter"
@@ -14,6 +15,7 @@ import (
 
 type checkServerFeature struct {
 	router *httprouter.HTTPServer
+	server *http.Server
 }
 
 func (c *checkServerFeature) theServerIsStarted() error {
@@ -21,9 +23,8 @@ func (c *checkServerFeature) theServerIsStarted() error {
 	controls.Start()
 	c.router = httprouter.NewHTTPServer(controls)
 	routerAdapter := &httprouteradapter.HTTPRouterAdapter{Router: c.router}
-	startServerWithRouter(routerAdapter)
-
-	return nil
+	c.server = startServerWithRouter(routerAdapter)
+	return waitForServerReady("http://localhost:8080/status", 5*time.Second)
 }
 
 func (c *checkServerFeature) aClientAsksTheStatus() error {
@@ -64,7 +65,7 @@ func ClientAsksTheServerForTheStatusFeatureContext(s *godog.ScenarioContext) {
 	s.Then(`I should tell the client the status`, c.iShouldTellTheClientTheStatus)
 }
 
-func startServerWithRouter(adapter *httprouteradapter.HTTPRouterAdapter) {
+func startServerWithRouter(adapter *httprouteradapter.HTTPRouterAdapter) *http.Server {
 	server := &http.Server{
 		Addr:         ":8080",
 		Handler:      adapter, // Use your router's HandleHTTP as the handler
@@ -79,4 +80,18 @@ func startServerWithRouter(adapter *httprouteradapter.HTTPRouterAdapter) {
 			log.Printf("HTTP server error: %v", err)
 		}
 	}()
+
+	return server
+}
+
+func waitForServerReady(url string, timeout time.Duration) error {
+	deadline := time.Now().Add(timeout)
+	for time.Now().Before(deadline) {
+		_, err := http.Get(url)
+		if err == nil {
+			return nil // Server is up and responding
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+	return fmt.Errorf("server failed to become ready within %v", timeout)
 }
