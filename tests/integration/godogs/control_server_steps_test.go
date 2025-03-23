@@ -1,7 +1,7 @@
 package main
 
 import (
-	"minecraftremote/src/server/mcservercontrols"
+	"minecraftremote/src/controls/mcservercontrols"
 	"testing"
 
 	"github.com/cucumber/godog"
@@ -12,7 +12,7 @@ type checkServerFeature struct {
 }
 
 func (c *checkServerFeature) theServerIsStarted() error {
-	c.mc = *mcservercontrols.NewServer()
+	c.mc = *mcservercontrols.NewControls()
 	c.mc.Start()
 	return nil
 }
