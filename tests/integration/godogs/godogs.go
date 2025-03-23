@@ -1,4 +1,4 @@
-package main
+package integrationtest
 
 // Godogs available to eat
 var Godogs int
