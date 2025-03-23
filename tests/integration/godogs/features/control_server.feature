@@ -1,6 +1,6 @@
-Feature: Minecraft polling
+Feature: Control the minecraft server
 
-  Scenario: Server should be running
-    Given the client asks the server if it's there
+  Scenario: Client asks the server for the status
+    Given the server is started
     When a client asks the status
-    Then I should greet the client
+    Then I should tell the client the status

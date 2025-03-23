@@ -10,21 +10,21 @@ import (
 )
 
 func TestStartServer(t *testing.T) {
-	server := httprouter.NewHTTPServer(stubcontrols.NewStubControls())
-	resp := server.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
+	router := httprouter.NewHTTPServer(stubcontrols.NewStubControls())
+	resp := router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
 	assert.Truef(t, resp.StatusCode == 200, "Server did not start successfully")
 }
 
 func TestStopServer(t *testing.T) {
-	server := httprouter.NewHTTPServer(stubcontrols.NewStubControls())
-	server.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
-	resp := server.HandleHTTP(cannedrequests.NewStopRequest().ToHTTPRequest())
+	router := httprouter.NewHTTPServer(stubcontrols.NewStubControls())
+	router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
+	resp := router.HandleHTTP(cannedrequests.NewStopRequest().ToHTTPRequest())
 	assert.Truef(t, resp.StatusCode == 200, "Server did not stop successfully, maybe it did not start?")
 }
 
 func TestServerStatistics(t *testing.T) {
-	server := httprouter.NewHTTPServer(stubcontrols.NewStubControls())
-	server.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
-	resp := server.HandleHTTP(cannedrequests.NewStatusRequest().ToHTTPRequest())
+	router := httprouter.NewHTTPServer(stubcontrols.NewStubControls())
+	router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
+	resp := router.HandleHTTP(cannedrequests.NewStatusRequest().ToHTTPRequest())
 	assert.Truef(t, resp.StatusCode == 200, "Server did not get status successfully, maybe it did not start?")
 }
