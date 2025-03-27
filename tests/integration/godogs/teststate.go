@@ -10,5 +10,5 @@ import (
 type TestState struct {
 	Controls controls.Controls
 	Server   *http.Server
-	Process  *process.Process
+	Process  process.Process
 }

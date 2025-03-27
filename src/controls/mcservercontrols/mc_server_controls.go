@@ -30,7 +30,7 @@ func (m *MinecraftServer) Start(minecraftServer process.Process) process.Process
 		m.started = true
 	}
 
-	return m.serverInBackground
+	return minecraftServer
 }
 func (m *MinecraftServer) Stop() bool {
 	if m.started {

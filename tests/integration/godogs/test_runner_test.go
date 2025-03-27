@@ -20,7 +20,7 @@ func TestScenariosWithStartedServer(t *testing.T) {
 		Controls: mcservercontrols.NewControls(),
 	}
 
-	testState.Process = testState.Controls.Start(&process.WinProcess{})
+	testState.Process = testState.Controls.Start(process.NewWinProcess("notepad.exe"))
 
 	// Set up router and server
 	router := httprouter.NewHTTPServer(testState.Controls, &process.WinProcess{})
