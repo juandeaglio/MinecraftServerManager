@@ -7,6 +7,7 @@ import (
 	"minecraftremote/src/controls/mcservercontrols"
 	"minecraftremote/src/httprouter"
 	"minecraftremote/src/httprouteradapter"
+	"minecraftremote/src/process"
 	"net/http"
 	"testing"
 	"time"
@@ -19,10 +20,10 @@ func TestScenariosWithStartedServer(t *testing.T) {
 		Controls: mcservercontrols.NewControls(),
 	}
 
-	testState.Controls.Start()
+	testState.Process = testState.Controls.Start(&process.WinProcess{})
 
 	// Set up router and server
-	router := httprouter.NewHTTPServer(testState.Controls)
+	router := httprouter.NewHTTPServer(testState.Controls, &process.WinProcess{})
 	routerAdapter := &httprouteradapter.HTTPRouterAdapter{Router: router}
 	testState.Server = startServerWithRouter(routerAdapter)
 
@@ -48,7 +49,7 @@ func TestScenariosWithStoppedServer(t *testing.T) {
 	}
 
 	// Set up router and server
-	router := httprouter.NewHTTPServer(testState.Controls)
+	router := httprouter.NewHTTPServer(testState.Controls, &process.WinProcess{})
 	routerAdapter := &httprouteradapter.HTTPRouterAdapter{Router: router}
 	testState.Server = startServerWithRouter(routerAdapter)
 

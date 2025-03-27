@@ -2,6 +2,7 @@ package integrationtest
 
 import (
 	"minecraftremote/src/controls"
+	"minecraftremote/src/process"
 	"net/http"
 )
 
@@ -9,4 +10,5 @@ import (
 type TestState struct {
 	Controls controls.Controls
 	Server   *http.Server
+	Process  *process.Process
 }

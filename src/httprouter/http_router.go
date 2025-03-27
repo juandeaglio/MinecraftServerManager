@@ -48,7 +48,8 @@ func (h *HTTPServer) HandleHTTP(req *http.Request) *http.Response {
 
 // handleStart handles server start requests
 func (h *HTTPServer) handleStart(req *http.Request) *http.Response {
-	if h.handler.Start(h.proc).Start() == nil {
+	process := h.handler.Start(h.proc)
+	if process.PID() != -1 {
 		return &http.Response{
 			StatusCode: 200,
 			Status:     "OK",

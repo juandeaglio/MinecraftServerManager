@@ -13,19 +13,19 @@ import (
 func TestStartServer(t *testing.T) {
 	router := httprouter.NewHTTPServer(stubcontrols.NewStubControls(), &process.FakeProcess{})
 	resp := router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
-	assert.Truef(t, resp.StatusCode == 200, "Server did not start successfully")
+	assert.Equalf(t, resp.StatusCode, 200, "Server did not start successfully")
 }
 
 func TestStopServer(t *testing.T) {
 	router := httprouter.NewHTTPServer(stubcontrols.NewStubControls(), &process.FakeProcess{})
 	router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
 	resp := router.HandleHTTP(cannedrequests.NewStopRequest().ToHTTPRequest())
-	assert.Truef(t, resp.StatusCode == 200, "Server did not stop successfully, maybe it did not start?")
+	assert.Equalf(t, resp.StatusCode, 200, "Server did not stop successfully, maybe it did not start?")
 }
 
 func TestServerStatistics(t *testing.T) {
 	router := httprouter.NewHTTPServer(stubcontrols.NewStubControls(), &process.FakeProcess{})
 	router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
 	resp := router.HandleHTTP(cannedrequests.NewStatusRequest().ToHTTPRequest())
-	assert.Truef(t, resp.StatusCode == 200, "Server did not get status successfully, maybe it did not start?")
+	assert.Equalf(t, resp.StatusCode, 200, "Server did not get status successfully, maybe it did not start?")
 }

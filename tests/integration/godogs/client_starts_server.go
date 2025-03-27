@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"minecraftremote/src/process"
 	"net/http"
 
 	"github.com/cucumber/godog"
@@ -15,7 +16,7 @@ type startServerFeature struct {
 }
 
 func (c *startServerFeature) theServerIsStartedWithPlayers() error {
-	c.state.Controls.Start()
+	c.state.Controls.Start(&process.WinProcess{})
 	if c.state.Controls.IsStarted() {
 		fmt.Errorf("the server was unable to start")
 	}
