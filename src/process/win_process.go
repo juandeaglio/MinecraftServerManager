@@ -31,14 +31,19 @@ func (w *WinProcess) Start() error {
 	}
 	w.cmd = exec.Command(w.program, w.args...)
 	w.cmd.SysProcAttr = &syscall.SysProcAttr{
-		HideWindow: true, // Prevents the Notepad window from showing
+		CreationFlags: syscall.CREATE_NEW_PROCESS_GROUP, // Create a new process group
+		HideWindow:    false,                            // Prevents the Notepad window from showing
+
 	}
 	return w.cmd.Start()
 }
 
 // Stop implements Process.
 func (w *WinProcess) Stop() error {
-	panic("Unimplemented")
+	if w.cmd != nil && w.cmd.Process != nil {
+		return w.cmd.Process.Kill()
+	}
+	return nil
 }
 
 var _ Process = (*FakeProcess)(nil)

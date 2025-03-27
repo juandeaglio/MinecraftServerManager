@@ -22,6 +22,8 @@ func TestScenariosWithStartedServer(t *testing.T) {
 
 	testState.Process = testState.Controls.Start(process.NewWinProcess("notepad.exe"))
 
+	defer testState.Controls.Stop()
+
 	// Set up router and server
 	router := httprouter.NewHTTPServer(testState.Controls, &process.WinProcess{})
 	routerAdapter := &httprouteradapter.HTTPRouterAdapter{Router: router}
@@ -47,6 +49,7 @@ func TestScenariosWithStoppedServer(t *testing.T) {
 	testState := &TestState{
 		Controls: mcservercontrols.NewControls(),
 	}
+	defer testState.Controls.Stop()
 
 	// Set up router and server
 	router := httprouter.NewHTTPServer(testState.Controls, &process.WinProcess{})
