@@ -4,7 +4,12 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"minecraftremote/src/controls/mcservercontrols"
+	"minecraftremote/src/httprouter"
+	"minecraftremote/src/httprouteradapter"
+	"minecraftremote/src/process"
 	"net/http"
+	"time"
 
 	"github.com/cucumber/godog"
 )
@@ -31,13 +36,37 @@ func (c *startServerFeature) iShouldTellTheClientTheStatusWithPlayers() error {
 	return fmt.Errorf("failed to get players")
 }
 
-func ClientStartsServer(s *godog.ScenarioContext, state *TestState) {
+func ClientStartsServer(s *godog.ScenarioContext) {
+	controls := mcservercontrols.NewControls()
+	router := httprouter.NewHTTPRouter(controls, &process.WinProcess{})
+	routerAdapter := &httprouteradapter.HTTPRouterAdapter{Router: router}
+	testState := &TestState{
+		Controls: controls,
+	}
+
 	s.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 		log.Printf("Running scenario: %s", sc.Name)
+		testState.Server = startServerWithRouter(routerAdapter)
+
+		waitForServerReady("http://localhost:8080/status", 5*time.Second)
+
 		return ctx, nil
 	})
-	c := &startServerFeature{state: state} // Pass the shared state
-	s.Given(`^the Minecraft server isn't running$`, c.theServerIsStartedWithPlayers)
+	c := &startServerFeature{state: testState} // Pass the shared state
+	s.Given(`^the Minecraft server isn't started$`, c.theServerIsStartedWithPlayers)
 	s.When(`^a client starts the server$`, c.aClientAsksTheStatusWithPlayers)
 	s.Then(`^the server starts$`, c.iShouldTellTheClientTheStatusWithPlayers)
+
+	s.After(func(ctx context.Context, sc *godog.Scenario, e error) (context.Context, error) {
+		if e != nil {
+			log.Printf("Scenario %s failed due to: %s", sc.Name, e.Error())
+		}
+		if testState.Server != nil {
+			testState.Server.Close()
+		}
+		if testState.Controls != nil {
+			testState.Controls.Stop()
+		}
+		return ctx, nil
+	})
 }

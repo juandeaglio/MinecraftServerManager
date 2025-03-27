@@ -21,7 +21,7 @@ type HTTPServer struct {
 	handler controls.Controls
 }
 
-func NewHTTPServer(controls controls.Controls, proc process.Process) *HTTPServer {
+func NewHTTPRouter(controls controls.Controls, proc process.Process) *HTTPServer {
 	return &HTTPServer{handler: controls, proc: proc}
 }
 
