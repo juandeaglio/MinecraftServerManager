@@ -25,6 +25,7 @@ func (m *MinecraftServer) getPlayers() int {
 
 func (m *MinecraftServer) Start(minecraftServer process.Process) process.Process {
 	m.serverInBackground = minecraftServer
+	m.serverInBackground.Start()
 	if m.serverInBackground.PID() >= 0 {
 		m.started = true
 	}
