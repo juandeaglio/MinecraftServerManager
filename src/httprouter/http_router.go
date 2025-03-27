@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"minecraftremote/src/controls"
+	"minecraftremote/src/process"
 	"net/http"
 )
 
@@ -16,11 +17,12 @@ type HTTPRouter interface {
 }
 
 type HTTPServer struct {
+	proc    process.Process
 	handler controls.Controls
 }
 
-func NewHTTPServer(controls controls.Controls) *HTTPServer {
-	return &HTTPServer{handler: controls}
+func NewHTTPServer(controls controls.Controls, proc process.Process) *HTTPServer {
+	return &HTTPServer{handler: controls, proc: proc}
 }
 
 // HandleHTTP processes incoming HTTP requests and routes them to appropriate handlers
@@ -46,7 +48,7 @@ func (h *HTTPServer) HandleHTTP(req *http.Request) *http.Response {
 
 // handleStart handles server start requests
 func (h *HTTPServer) handleStart(req *http.Request) *http.Response {
-	if h.handler.Start() {
+	if h.handler.Start(h.proc).Start() == nil {
 		return &http.Response{
 			StatusCode: 200,
 			Status:     "OK",

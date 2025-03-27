@@ -1,12 +1,12 @@
 package mcservercontrols
 
 import (
-	background "minecraftremote/src/backgroundserver"
 	server "minecraftremote/src/controls"
+	"minecraftremote/src/process"
 )
 
 type MinecraftServer struct {
-	serverInBackground background.BackgroundServer
+	serverInBackground process.Process
 	started            bool
 }
 
@@ -23,12 +23,13 @@ func (m *MinecraftServer) getPlayers() int {
 	return 0
 }
 
-func (m *MinecraftServer) Start() bool {
-	if !m.started {
+func (m *MinecraftServer) Start(minecraftServer process.Process) process.Process {
+	m.serverInBackground = minecraftServer
+	if m.serverInBackground.PID() >= 0 {
 		m.started = true
-		return m.started
 	}
-	return m.started
+
+	return m.serverInBackground
 }
 func (m *MinecraftServer) Stop() bool {
 	if m.started {
@@ -38,8 +39,8 @@ func (m *MinecraftServer) Stop() bool {
 	return false
 }
 
-func NewControls(minecraftServer background.BackgroundServer) *MinecraftServer {
-	return &MinecraftServer{serverInBackground: minecraftServer}
+func NewControls() *MinecraftServer {
+	return &MinecraftServer{}
 }
 
 var _ server.Controls = (*MinecraftServer)(nil)

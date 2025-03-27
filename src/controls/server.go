@@ -1,7 +1,9 @@
 package controls
 
+import "minecraftremote/src/process"
+
 type Controls interface {
-	Start() bool
+	Start(process.Process) process.Process
 	Stop() bool
 	Status() *Status
 	IsStarted() bool

@@ -1,14 +1,17 @@
 package stubcontrols
 
-import "minecraftremote/src/controls"
+import (
+	"minecraftremote/src/controls"
+	"minecraftremote/src/process"
+)
 
 type StubControls struct {
 	started bool
 }
 
-func (m *StubControls) Start() bool {
+func (m *StubControls) Start(process process.Process) process.Process {
 	m.started = true
-	return m.started
+	return process
 }
 func (m *StubControls) Stop() bool {
 	return true
