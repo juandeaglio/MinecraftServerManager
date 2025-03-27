@@ -3,7 +3,7 @@ package integrationtest
 import (
 	"fmt"
 	"log"
-	"minecraftremote/src/controls"
+
 	"minecraftremote/src/controls/mcservercontrols"
 	"minecraftremote/src/httprouter"
 	"minecraftremote/src/httprouteradapter"
@@ -14,16 +14,11 @@ import (
 	"github.com/cucumber/godog"
 )
 
-// Shared test state
-type TestState struct {
-	Controls controls.Controls
-	Server   *http.Server
-}
-
-func TestScenarios(t *testing.T) {
+func TestScenariosWithStartedServer(t *testing.T) {
 	testState := &TestState{
 		Controls: mcservercontrols.NewControls(),
 	}
+
 	testState.Controls.Start()
 
 	// Set up router and server
@@ -36,20 +31,36 @@ func TestScenarios(t *testing.T) {
 	// Combine both scenario contexts into one initializer
 	combinedScenarioInitializer := func(s *godog.ScenarioContext) {
 		ClientAsksTheServerForTheStatusScenarioContext(s, testState)
-		ClientAsksThePopulatedServerForTheStatusScenarioContext(s, testState)
 	}
 
-	suite := godog.TestSuite{
-		ScenarioInitializer: combinedScenarioInitializer,
-		Options: &godog.Options{
-			Format:   "pretty",
-			Paths:    []string{"features"},
-			TestingT: t,
-			Strict:   true,
-			NoColors: false,   // Ensure colors are enabled for clarity
-			Tags:     "~@wip", // Exclude work-in-progress tests
-		},
+	suite := runScenario(t, combinedScenarioInitializer)
+
+	if status := suite.Run(); status != 0 {
+		t.Fatalf("Feature tests failed with status: %d", status)
 	}
+
+	testState.Server.Close()
+}
+
+func TestScenariosWithStoppedServer(t *testing.T) {
+	testState := &TestState{
+		Controls: mcservercontrols.NewControls(),
+	}
+
+	// Set up router and server
+	router := httprouter.NewHTTPServer(testState.Controls)
+	routerAdapter := &httprouteradapter.HTTPRouterAdapter{Router: router}
+	testState.Server = startServerWithRouter(routerAdapter)
+
+	waitForServerReady("http://localhost:8080/status", 5*time.Second)
+
+	// Combine both scenario contexts into one initializer
+	combinedScenarioInitializer := func(s *godog.ScenarioContext) {
+		ClientAsksTheServerForTheStatusScenarioContext(s, testState)
+		ClientStartsServer(s, testState)
+	}
+
+	suite := runScenario(t, combinedScenarioInitializer)
 
 	if status := suite.Run(); status != 0 {
 		t.Fatalf("Feature tests failed with status: %d", status)

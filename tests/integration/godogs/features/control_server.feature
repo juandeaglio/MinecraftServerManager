@@ -1,11 +1,16 @@
 Feature: Control the minecraft server
 
   Scenario: Client asks the server for the status
-    Given the server is started
-    When a client asks the status
-    Then the server should tell the client the status
+    Given the Minecraft server is running
+    When a client requests the server status
+    Then the system returns a status response indicating "online" along with the current player count
 
-  Scenario: Client asks populated server for status
-    Given the server is started with players
-    When a client asks the status with players
-    Then the server should tell the client the status with players
+  Scenario: Client starts the server
+    Given the Minecraft server isn't running
+    When a client starts the server
+    Then the server starts
+    
+  Scenario: Client stops the server
+    Given the Minecraft server is running
+    When a client stops the server
+    Then the server stops

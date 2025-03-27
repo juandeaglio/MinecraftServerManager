@@ -2,8 +2,8 @@ package httproutertests
 
 import (
 	"minecraftremote/src/httprouter"
+	"minecraftremote/src/stubcontrols"
 	"minecraftremote/tests/unit/httpdriver/cannedrequests"
-	"minecraftremote/tests/unit/httpdriver/stubcontrols"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

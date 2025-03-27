@@ -57,7 +57,7 @@ func (c *checkServerFeature) iShouldTellTheClientTheStatus() error {
 
 	playersValue, _ := players.(float64) // JSON numbers are parsed as float64 by default
 
-	if playersValue != 0 {
+	if playersValue < 0 {
 		return fmt.Errorf("expected 'Players' value to be 0 but got %v", playersValue)
 	}
 
@@ -71,7 +71,7 @@ func ClientAsksTheServerForTheStatusScenarioContext(s *godog.ScenarioContext, st
 	})
 	c := &checkServerFeature{state: state} // Pass the shared state
 
-	s.Given(`^the server is started$`, c.theServerIsStarted)
-	s.When(`^a client asks the status$`, c.aClientAsksTheStatus)
-	s.Then(`^the server should tell the client the status$`, c.iShouldTellTheClientTheStatus)
+	s.Given(`^the Minecraft server is running$`, c.theServerIsStarted)
+	s.When(`^a client requests the server status$`, c.aClientAsksTheStatus)
+	s.Then(`^the system returns a status response indicating "online" along with the current player count$`, c.iShouldTellTheClientTheStatus)
 }

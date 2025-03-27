@@ -1,11 +1,18 @@
 package mcservercontrols
 
 import (
+	background "minecraftremote/src/backgroundserver"
 	server "minecraftremote/src/controls"
 )
 
 type MinecraftServer struct {
-	started bool
+	serverInBackground background.BackgroundServer
+	started            bool
+}
+
+// IsStarted implements controls.Controls.
+func (m *MinecraftServer) IsStarted() bool {
+	return m.started
 }
 
 func (m *MinecraftServer) Status() *server.Status {
@@ -21,7 +28,7 @@ func (m *MinecraftServer) Start() bool {
 		m.started = true
 		return m.started
 	}
-	return false
+	return m.started
 }
 func (m *MinecraftServer) Stop() bool {
 	if m.started {
@@ -31,8 +38,8 @@ func (m *MinecraftServer) Stop() bool {
 	return false
 }
 
-func NewControls() *MinecraftServer {
-	return &MinecraftServer{}
+func NewControls(minecraftServer background.BackgroundServer) *MinecraftServer {
+	return &MinecraftServer{serverInBackground: minecraftServer}
 }
 
 var _ server.Controls = (*MinecraftServer)(nil)
