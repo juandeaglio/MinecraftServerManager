@@ -14,7 +14,7 @@ type WinProcess struct {
 
 // Started implements Process.
 func (w *WinProcess) Started() bool {
-	panic("unimplemented")
+	return w.PID() > 0
 }
 
 // NewRealProcess initializes a process with a given command.
