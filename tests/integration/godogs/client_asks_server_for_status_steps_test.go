@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"minecraftremote/src/process"
+	"minecraftremote/tests/integration/godogs/constants"
 	"net/http"
 	"strings"
 
@@ -17,10 +18,8 @@ type checkServerFeature struct {
 	resp        *http.Response
 }
 
-const statusURL = "http://localhost:8080/status"
-
 func (c *checkServerFeature) theServerIsStarted() error {
-	c.resp, _ = http.Get(statusURL)
+	c.resp, _ = http.Get(constants.StatusURL)
 	if c.resp.StatusCode == 200 {
 		return nil
 	}
@@ -28,7 +27,7 @@ func (c *checkServerFeature) theServerIsStarted() error {
 }
 
 func (c *checkServerFeature) aClientAsksTheStatus() error {
-	c.resp, _ = http.Get(statusURL)
+	c.resp, _ = http.Get(constants.StatusURL)
 	statusCode := c.resp.StatusCode
 	if statusCode == 200 {
 		return nil

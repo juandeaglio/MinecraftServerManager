@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"minecraftremote/tests/integration/godogs/constants"
+
 	"github.com/cucumber/godog"
 )
 
@@ -13,10 +15,25 @@ type startServerFeature struct {
 	resp        *http.Response
 }
 
-func (c *startServerFeature) theServerIsStartedWithPlayers() error {
-	if !c.testContext.Controls.IsStarted() {
-		return fmt.Errorf("the server was unable to start")
+func (c *startServerFeature) theServerIsNotStarted() error {
+	// Check if the Controls indicate the server is not running
+	if c.testContext.Controls.IsStarted() {
+		return fmt.Errorf("expected server to be stopped, but it's running")
 	}
+	// Check the status endpoint
+	// Additional verification: Try to reach the server status URL
+	resp, err := http.Get(constants.StatusURL)
+	if err != nil {
+		// Connection error means server is likely not running - which is what we want
+		return nil
+	}
+	defer resp.Body.Close()
+
+	// If we get a successful status code, server might be running
+	if resp.StatusCode == http.StatusOK {
+		return fmt.Errorf("expected server to be stopped, but status endpoint is responding")
+	}
+
 	return nil
 }
 
@@ -38,7 +55,7 @@ func ClientStartsServer(s *godog.ScenarioContext) {
 	s.After(AfterScenarioHook(tc))
 
 	// Register step definitions
-	s.Given(`^the Minecraft server isn't started$`, c.theServerIsStartedWithPlayers)
+	s.Given(`^the Minecraft server isn't started$`, c.theServerIsNotStarted)
 	s.When(`^a client starts the server$`, c.aClientAsksTheStatusWithPlayers)
 	s.Then(`^the server starts$`, c.iShouldTellTheClientTheStatusWithPlayers)
 }
