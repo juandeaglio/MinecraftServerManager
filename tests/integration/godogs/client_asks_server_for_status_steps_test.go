@@ -1,25 +1,18 @@
 package integrationtest
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
-	"minecraftremote/src/controls/mcservercontrols"
-	"minecraftremote/src/httprouter"
-	"minecraftremote/src/httprouteradapter"
-	"minecraftremote/src/process"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/cucumber/godog"
 )
 
 type checkServerFeature struct {
-	state *TestState
-	resp  *http.Response
+	testContext *TestContext
+	resp        *http.Response
 }
 
 const statusURL = "http://localhost:8080/status"
@@ -70,46 +63,15 @@ func (c *checkServerFeature) iShouldTellTheClientTheStatus() error {
 }
 
 func ClientAsksTheServerForTheStatusScenarioContext(s *godog.ScenarioContext) {
-	controls := mcservercontrols.NewControls()
-	router := httprouter.NewHTTPRouter(controls, &process.WinProcess{})
-	routerAdapter := &httprouteradapter.HTTPRouterAdapter{Router: router}
-	testState := &TestState{
-		Controls: controls,
-	}
+	tc := NewTestContext()
+	c := &checkServerFeature{testContext: tc}
 
-	s.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-		log.Printf("Running scenario: %s", sc.Name)
-		testState.Server = *startServerWithRouter(routerAdapter)
+	// Register hooks with common infrastructure
+	s.Before(BeforeScenarioWithNotepadHook(tc))
+	s.After(AfterScenarioHook(tc))
 
-		testState.Process = testState.Controls.Start(process.NewWinProcess("notepad.exe"))
-
-		// Set up router and server
-
-		waitForServerReady("http://localhost:8080/status", 5*time.Second)
-
-		return ctx, nil
-	})
-	c := &checkServerFeature{state: testState} // Pass the shared state
-
+	// Register step definitions
 	s.Given(`^the Minecraft server is running$`, c.theServerIsStarted)
 	s.When(`^a client requests the server status$`, c.aClientAsksTheStatus)
 	s.Then(`^the system returns a status response indicating "online" along with the current player count$`, c.iShouldTellTheClientTheStatus)
-
-	s.After(func(ctx context.Context, sc *godog.Scenario, e error) (context.Context, error) {
-		if e != nil {
-			log.Printf("Scenario %s failed due to: %s", sc.Name, e.Error())
-		}
-
-		testState.Server.Close()
-
-		if testState.Process != nil {
-			log.Printf("Explicitly stopping notepad process")
-			testState.Process.Stop()
-		}
-
-		if testState.Controls != nil {
-			testState.Controls.Stop()
-		}
-		return ctx, nil
-	})
 }

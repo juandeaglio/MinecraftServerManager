@@ -1,7 +1,6 @@
 package integrationtest
 
 import (
-	"fmt"
 	"log"
 	"minecraftremote/src/controls"
 	"minecraftremote/src/httprouteradapter"
@@ -34,16 +33,4 @@ func startServerWithRouter(adapter *httprouteradapter.HTTPRouterAdapter) *http.S
 	}()
 
 	return server
-}
-
-func waitForServerReady(url string, timeout time.Duration) error {
-	deadline := time.Now().Add(timeout)
-	for time.Now().Before(deadline) {
-		_, err := http.Get(url)
-		if err == nil {
-			return nil // Server is up and responding
-		}
-		time.Sleep(100 * time.Millisecond)
-	}
-	return fmt.Errorf("server failed to become ready within %v", timeout)
 }

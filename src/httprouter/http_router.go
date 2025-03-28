@@ -16,17 +16,17 @@ type HTTPRouter interface {
 	HandleHTTP(*http.Request) *http.Response
 }
 
-type HTTPServer struct {
+type ServerRouter struct {
 	proc    process.Process
 	handler controls.Controls
 }
 
-func NewHTTPRouter(controls controls.Controls, proc process.Process) *HTTPServer {
-	return &HTTPServer{handler: controls, proc: proc}
+func NewHTTPRouter(controls controls.Controls, proc process.Process) *ServerRouter {
+	return &ServerRouter{handler: controls, proc: proc}
 }
 
 // HandleHTTP processes incoming HTTP requests and routes them to appropriate handlers
-func (h *HTTPServer) HandleHTTP(req *http.Request) *http.Response {
+func (h *ServerRouter) HandleHTTP(req *http.Request) *http.Response {
 	// Define route handlers mapping
 	handlers := map[string]func(*http.Request) *http.Response{
 		"/start":  h.handleStart,
@@ -47,7 +47,7 @@ func (h *HTTPServer) HandleHTTP(req *http.Request) *http.Response {
 }
 
 // handleStart handles server start requests
-func (h *HTTPServer) handleStart(req *http.Request) *http.Response {
+func (h *ServerRouter) handleStart(req *http.Request) *http.Response {
 	process := h.handler.Start(h.proc)
 	if process.PID() != -1 {
 		return &http.Response{
@@ -62,7 +62,7 @@ func (h *HTTPServer) handleStart(req *http.Request) *http.Response {
 }
 
 // handleStop handles server stop requests
-func (h *HTTPServer) handleStop(req *http.Request) *http.Response {
+func (h *ServerRouter) handleStop(req *http.Request) *http.Response {
 	if h.handler.Stop() {
 		return &http.Response{
 			StatusCode: 200,
@@ -76,7 +76,7 @@ func (h *HTTPServer) handleStop(req *http.Request) *http.Response {
 }
 
 // handleStatus handles server status requests
-func (h *HTTPServer) handleStatus(req *http.Request) *http.Response {
+func (h *ServerRouter) handleStatus(req *http.Request) *http.Response {
 	body, err := json.Marshal(h.handler.Status())
 	if err != nil {
 		return &http.Response{
@@ -95,4 +95,4 @@ func (h *HTTPServer) handleStatus(req *http.Request) *http.Response {
 	return resp
 }
 
-var _ HTTPRouter = (*HTTPServer)(nil)
+var _ HTTPRouter = (*ServerRouter)(nil)

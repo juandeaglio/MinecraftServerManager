@@ -7,7 +7,7 @@ import (
 )
 
 type HTTPRouterAdapter struct {
-	Router *httprouter.HTTPServer
+	Router *httprouter.ServerRouter
 }
 
 func (a *HTTPRouterAdapter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
