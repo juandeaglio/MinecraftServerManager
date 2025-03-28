@@ -11,4 +11,5 @@ type Controls interface {
 
 type Status struct {
 	Players int
+	Online  bool
 }

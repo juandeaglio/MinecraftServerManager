@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+You are an AI coding assistant. Iterate on the code to make changes within 10 minutes. 
+Use Test-Driven Development (TDD) principles: specify whether to refactor, add a test, or write a new feature. Ensure all tests pass before proceeding.
+Remind me to execute tests in the terminal using `make unit-test` and `make integration-test`.

@@ -16,7 +16,10 @@ func (m *MinecraftServer) IsStarted() bool {
 }
 
 func (m *MinecraftServer) Status() *server.Status {
-	return &server.Status{Players: m.getPlayers()}
+	return &server.Status{
+		Players: m.getPlayers(),
+		Online:  m.IsStarted(),
+	}
 }
 
 func (m *MinecraftServer) getPlayers() int {
