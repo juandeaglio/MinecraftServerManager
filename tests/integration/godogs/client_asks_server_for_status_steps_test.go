@@ -79,7 +79,7 @@ func ClientAsksTheServerForTheStatusScenarioContext(s *godog.ScenarioContext) {
 
 	s.Before(func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 		log.Printf("Running scenario: %s", sc.Name)
-		testState.Server = startServerWithRouter(routerAdapter)
+		testState.Server = *startServerWithRouter(routerAdapter)
 
 		testState.Process = testState.Controls.Start(process.NewWinProcess("notepad.exe"))
 
@@ -99,8 +99,12 @@ func ClientAsksTheServerForTheStatusScenarioContext(s *godog.ScenarioContext) {
 		if e != nil {
 			log.Printf("Scenario %s failed due to: %s", sc.Name, e.Error())
 		}
-		if testState.Server != nil {
-			testState.Server.Close()
+
+		testState.Server.Close()
+
+		if testState.Process != nil {
+			log.Printf("Explicitly stopping notepad process")
+			testState.Process.Stop()
 		}
 
 		if testState.Controls != nil {

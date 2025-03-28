@@ -21,7 +21,10 @@ func NewWinProcess(command string, args ...string) *WinProcess {
 
 // PID implements Process.
 func (w *WinProcess) PID() int {
-	return -1 // Simulate no process running
+	if w.cmd != nil && w.cmd.Process != nil {
+		return w.cmd.Process.Pid
+	}
+	return -1 // Indicates no process running
 }
 
 // Start implements Process.
@@ -35,13 +38,28 @@ func (w *WinProcess) Start() error {
 		HideWindow:    false,                            // Prevents the Notepad window from showing
 
 	}
-	return w.cmd.Start()
+	err := w.cmd.Start()
+	if err != nil {
+		return fmt.Errorf("failed to start process %s: %w", w.program, err)
+	}
+
+	// Log successful start with PID
+	fmt.Printf("Process started: %s (PID: %d)\n", w.program, w.cmd.Process.Pid)
+	return nil
 }
 
 // Stop implements Process.
 func (w *WinProcess) Stop() error {
 	if w.cmd != nil && w.cmd.Process != nil {
-		return w.cmd.Process.Kill()
+		pid := w.cmd.Process.Pid
+		err := w.cmd.Process.Kill()
+		if err != nil {
+			return fmt.Errorf("failed to kill process %s (PID: %d): %w", w.program, pid, err)
+		}
+		fmt.Printf("Process killed: %s (PID: %d)\n", w.program, pid)
+		// Ensure we clean up the reference
+		w.cmd = nil
+		return nil
 	}
 	return nil
 }

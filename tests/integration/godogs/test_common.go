@@ -3,10 +3,19 @@ package integrationtest
 import (
 	"fmt"
 	"log"
+	"minecraftremote/src/controls"
 	"minecraftremote/src/httprouteradapter"
+	"minecraftremote/src/process"
 	"net/http"
 	"time"
 )
+
+// TestState holds shared state for tests
+type TestState struct {
+	Controls controls.Controls
+	Server   http.Server
+	Process  process.Process
+}
 
 func startServerWithRouter(adapter *httprouteradapter.HTTPRouterAdapter) *http.Server {
 	server := &http.Server{
