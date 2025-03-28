@@ -5,6 +5,11 @@ type FakeProcess struct {
 	pid     int
 }
 
+// Started implements Process.
+func (f *FakeProcess) Started() bool {
+	return f.started
+}
+
 // PID implements Process.
 func (f *FakeProcess) PID() int {
 	if f.started {

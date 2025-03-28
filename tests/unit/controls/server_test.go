@@ -9,7 +9,7 @@ import (
 )
 
 func TestEmptyServerHas0Players(t *testing.T) {
-	controls := mcservercontrols.NewControls()
+	controls := mcservercontrols.NewControls(&process.FakeProcess{})
 	assert.Equalf(t, 0, controls.Status().Players, "Got more than 0 players on an empty server.")
 }
 
@@ -20,7 +20,7 @@ func TestStartServer(t *testing.T) {
 }
 
 func TestOfflineServerStatus(t *testing.T) {
-	controls := mcservercontrols.NewControls()
+	controls := mcservercontrols.NewControls(&process.FakeProcess{})
 
 	// Assert that the server status shows offline
 	assert.Falsef(t, controls.Status().Online, "Server with no PID should report as offline.")

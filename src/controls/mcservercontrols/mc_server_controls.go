@@ -12,7 +12,10 @@ type MinecraftServer struct {
 
 // IsStarted implements controls.Controls.
 func (m *MinecraftServer) IsStarted() bool {
-	return m.started
+	if m.serverInBackground == nil {
+		return false
+	}
+	return m.serverInBackground.Started()
 }
 
 func (m *MinecraftServer) Status() *server.Status {
@@ -43,8 +46,14 @@ func (m *MinecraftServer) Stop() bool {
 	return false
 }
 
-func NewControls() *MinecraftServer {
-	return &MinecraftServer{}
+// NewControls creates a new MinecraftServer instance.
+// If a process is provided, it will be used as the server process.
+func NewControls(process ...process.Process) *MinecraftServer {
+	server := &MinecraftServer{}
+	if len(process) > 0 {
+		server.serverInBackground = process[0]
+	}
+	return server
 }
 
 var _ server.Controls = (*MinecraftServer)(nil)
