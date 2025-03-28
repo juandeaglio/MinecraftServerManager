@@ -12,6 +12,11 @@ type WinProcess struct {
 	args    []string
 }
 
+// Started implements Process.
+func (w *WinProcess) Started() bool {
+	panic("unimplemented")
+}
+
 // NewRealProcess initializes a process with a given command.
 func NewWinProcess(command string, args ...string) *WinProcess {
 	return &WinProcess{
