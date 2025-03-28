@@ -51,7 +51,7 @@ func ClientStartsServer(s *godog.ScenarioContext) {
 	c := &startServerFeature{testContext: tc}
 
 	// Register hooks with common infrastructure
-	s.Before(BeforeScenarioHook(tc))
+	s.Before(BeforeScenarioHook(tc, "8081"))
 	s.After(AfterScenarioHook(tc))
 
 	// Register step definitions

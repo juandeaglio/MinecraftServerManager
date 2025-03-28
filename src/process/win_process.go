@@ -19,7 +19,6 @@ func NewWinProcess(command string, args ...string) *WinProcess {
 	}
 }
 
-// PID implements Process.
 func (w *WinProcess) PID() int {
 	if w.cmd != nil && w.cmd.Process != nil {
 		return w.cmd.Process.Pid
@@ -27,7 +26,6 @@ func (w *WinProcess) PID() int {
 	return -1 // Indicates no process running
 }
 
-// Start implements Process.
 func (w *WinProcess) Start() error {
 	if w.program == "" {
 		return fmt.Errorf("program is empty")
@@ -48,7 +46,6 @@ func (w *WinProcess) Start() error {
 	return nil
 }
 
-// Stop implements Process.
 func (w *WinProcess) Stop() error {
 	if w.cmd != nil && w.cmd.Process != nil {
 		pid := w.cmd.Process.Pid
@@ -64,4 +61,4 @@ func (w *WinProcess) Stop() error {
 	return nil
 }
 
-var _ Process = (*FakeProcess)(nil)
+var _ Process = (*WinProcess)(nil)

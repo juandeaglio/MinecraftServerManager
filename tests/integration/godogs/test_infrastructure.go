@@ -36,26 +36,26 @@ func NewTestContext() *TestContext {
 }
 
 // BeforeScenarioHook sets up the test environment before each scenario
-func BeforeScenarioHook(tc *TestContext) func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+func BeforeScenarioHook(tc *TestContext, port string) func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 	return func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 		log.Printf("Running scenario: %s", sc.Name)
-		tc.Server = startServerWithRouter(tc.Adapter)
+		tc.Server = startServerWithRouter(tc.Adapter, port)
 
 		// Wait for server to be ready
-		waitForServerReady("http://localhost:8080/status", 5*time.Second)
+		waitForServerReady("http://localhost:"+port+"/status", 5*time.Second)
 
 		return ctx, nil
 	}
 }
 
 // BeforeScenarioWithNotepadHook sets up the test environment and starts notepad
-func BeforeScenarioWithNotepadHook(tc *TestContext) func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+func BeforeScenarioWithNotepadHook(tc *TestContext, port string) func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 	return func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 		log.Printf("Running scenario: %s", sc.Name)
-		tc.Server = startServerWithRouter(tc.Adapter)
+		tc.Server = startServerWithRouter(tc.Adapter, port)
 
 		// Wait for server to be ready
-		waitForServerReady("http://localhost:8080/status", 5*time.Second)
+		waitForServerReady("http://localhost:"+port+"/status", 5*time.Second)
 
 		return ctx, nil
 	}
