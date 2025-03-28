@@ -1,9 +1,11 @@
 package integrationtest
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
+	"minecraftremote/src/process"
 	"net/http"
 	"strings"
 
@@ -67,7 +69,15 @@ func ClientAsksTheServerForTheStatusScenarioContext(s *godog.ScenarioContext) {
 	c := &checkServerFeature{testContext: tc}
 
 	// Register hooks with common infrastructure
-	s.Before(BeforeScenarioWithNotepadHook(tc))
+	// Replace the basic hook with combined hooks
+	baseHook := BeforeScenarioWithNotepadHook(tc)
+	customHook := func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+		// Start notepad process for testing
+		tc.Process = tc.Controls.Start(process.NewWinProcess("notepad.exe"))
+		return ctx, nil
+	}
+	s.Before(CombineBeforeHooks(baseHook, customHook))
+
 	s.After(AfterScenarioHook(tc))
 
 	// Register step definitions

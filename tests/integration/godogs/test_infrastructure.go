@@ -54,9 +54,6 @@ func BeforeScenarioWithNotepadHook(tc *TestContext) func(ctx context.Context, sc
 		log.Printf("Running scenario: %s", sc.Name)
 		tc.Server = startServerWithRouter(tc.Adapter)
 
-		// Start notepad process for testing
-		tc.Process = tc.Controls.Start(process.NewWinProcess("notepad.exe"))
-
 		// Wait for server to be ready
 		waitForServerReady("http://localhost:8080/status", 5*time.Second)
 
@@ -84,6 +81,20 @@ func AfterScenarioHook(tc *TestContext) func(ctx context.Context, sc *godog.Scen
 			tc.Controls.Stop()
 		}
 
+		return ctx, nil
+	}
+}
+
+// CombineBeforeHooks combines multiple before hooks into a single hook
+func CombineBeforeHooks(hooks ...func(ctx context.Context, sc *godog.Scenario) (context.Context, error)) func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+	return func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
+		var err error
+		for _, hook := range hooks {
+			ctx, err = hook(ctx, sc)
+			if err != nil {
+				return ctx, err
+			}
+		}
 		return ctx, nil
 	}
 }
