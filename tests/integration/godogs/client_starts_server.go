@@ -16,11 +16,11 @@ type startServerFeature struct {
 	resp        *http.Response
 }
 
-func (c *startServerFeature) theServerIsNotStarted() error {
-	// Check status endpoint
+func (c *startServerFeature) theMinecraftProcessIsNotRunning() error {
+	// Check status endpoint of our HTTP API server
 	resp, err := http.Get(constants.StatusURL)
 	if err != nil {
-		return fmt.Errorf("failed to connect to status endpoint: %v", err)
+		return fmt.Errorf("failed to connect to HTTP API status endpoint: %v", err)
 	}
 	defer resp.Body.Close()
 
@@ -30,19 +30,19 @@ func (c *startServerFeature) theServerIsNotStarted() error {
 	}
 
 	if online, exists := statusResponse["Online"].(bool); exists && online {
-		return fmt.Errorf("server should be stopped, but status endpoint reports Online=true")
+		return fmt.Errorf("Minecraft process should be stopped, but status endpoint reports Online=true")
 	}
 
 	return nil
 }
 
-func (c *startServerFeature) aClientAsksTheStatusWithPlayers() error {
-	return fmt.Errorf("the client was unable to get the status correctly")
+func (c *startServerFeature) aClientRequestsToStartMinecraftProcess() error {
+	return fmt.Errorf("the client was unable to start the Minecraft process correctly")
 }
 
-func (c *startServerFeature) iShouldTellTheClientTheStatusWithPlayers() error {
-	log.Println("Step 'I should tell the client the status with players' is not implemented!")
-	return fmt.Errorf("failed to get players")
+func (c *startServerFeature) theMinecraftProcessShouldBeRunning() error {
+	log.Println("Step 'the Minecraft process should be running' is not implemented!")
+	return fmt.Errorf("failed to verify Minecraft process is running")
 }
 
 func ClientStartsServer(s *godog.ScenarioContext) {
@@ -54,7 +54,7 @@ func ClientStartsServer(s *godog.ScenarioContext) {
 	s.After(AfterScenarioHook(tc))
 
 	// Register step definitions
-	s.Given(`^the Minecraft server isn't started$`, c.theServerIsNotStarted)
-	s.When(`^a client starts the server$`, c.aClientAsksTheStatusWithPlayers)
-	s.Then(`^the server starts$`, c.iShouldTellTheClientTheStatusWithPlayers)
+	s.Given(`^the Minecraft server isn't started$`, c.theMinecraftProcessIsNotRunning)
+	s.When(`^a client starts the server$`, c.aClientRequestsToStartMinecraftProcess)
+	s.Then(`^the server starts$`, c.theMinecraftProcessShouldBeRunning)
 }
