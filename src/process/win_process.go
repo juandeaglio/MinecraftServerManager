@@ -2,50 +2,10 @@ package process
 
 import (
 	"fmt"
-	"os"
+
 	"os/exec"
 	"syscall"
 )
-
-// OsOperations abstracts operating system level operations
-type OsOperations interface {
-	FindProcess(pid int) (*os.Process, error)
-	Signal(process *os.Process, signal syscall.Signal) error
-	CreateCommand(program string, args ...string) *exec.Cmd
-	SetSysProcAttr(cmd *exec.Cmd)
-	StartCmd(cmd *exec.Cmd) error
-	KillProcess(process *os.Process) error
-}
-
-// WindowsOsOperations implements OsOperations for Windows
-type WindowsOsOperations struct{}
-
-func (w *WindowsOsOperations) FindProcess(pid int) (*os.Process, error) {
-	return os.FindProcess(pid)
-}
-
-func (w *WindowsOsOperations) Signal(process *os.Process, signal syscall.Signal) error {
-	return process.Signal(signal)
-}
-
-func (w *WindowsOsOperations) CreateCommand(program string, args ...string) *exec.Cmd {
-	return exec.Command(program, args...)
-}
-
-func (w *WindowsOsOperations) SetSysProcAttr(cmd *exec.Cmd) {
-	cmd.SysProcAttr = &syscall.SysProcAttr{
-		CreationFlags: syscall.CREATE_NEW_PROCESS_GROUP,
-		HideWindow:    false,
-	}
-}
-
-func (w *WindowsOsOperations) StartCmd(cmd *exec.Cmd) error {
-	return cmd.Start()
-}
-
-func (w *WindowsOsOperations) KillProcess(process *os.Process) error {
-	return process.Kill()
-}
 
 type WinProcess struct {
 	cmd     *exec.Cmd

@@ -3,6 +3,7 @@ package process
 type FakeProcess struct {
 	started bool
 	pid     int
+	osOps   OsOperations
 }
 
 // Started implements Process.
@@ -29,6 +30,13 @@ func (f *FakeProcess) Start() error {
 func (f *FakeProcess) Stop() error {
 	f.started = false
 	return nil
+}
+
+// NewFakeProcess creates a new FakeProcess with default OsOperations
+func NewFakeProcess() *FakeProcess {
+	return &FakeProcess{
+		osOps: &WindowsOsOperations{},
+	}
 }
 
 var _ Process = (*FakeProcess)(nil)
