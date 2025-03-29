@@ -1,6 +1,7 @@
 package integrationtest
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,22 +17,20 @@ type startServerFeature struct {
 }
 
 func (c *startServerFeature) theServerIsNotStarted() error {
-	// Check if the Controls indicate the server is not running
-	if c.testContext.Controls.IsStarted() {
-		return fmt.Errorf("expected server to be stopped, but it's running")
-	}
-	// Check the status endpoint
-	// Additional verification: Try to reach the server status URL
+	// Check status endpoint
 	resp, err := http.Get(constants.StatusURL)
 	if err != nil {
-		// Connection error means server is likely not running - which is what we want
-		return nil
+		return fmt.Errorf("failed to connect to status endpoint: %v", err)
 	}
 	defer resp.Body.Close()
 
-	// If we get a successful status code, server might be running
-	if resp.StatusCode == http.StatusOK {
-		return fmt.Errorf("expected server to be stopped, but status endpoint is responding")
+	var statusResponse map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&statusResponse); err != nil {
+		return fmt.Errorf("failed to decode status response: %v", err)
+	}
+
+	if online, exists := statusResponse["Online"].(bool); exists && online {
+		return fmt.Errorf("server should be stopped, but status endpoint reports Online=true")
 	}
 
 	return nil
