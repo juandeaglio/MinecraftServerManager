@@ -18,7 +18,7 @@ type checkServerFeature struct {
 	resp        *http.Response
 }
 
-func (c *checkServerFeature) theServerIsStarted() error {
+func (c *checkServerFeature) theMinecraftProcessIsRunning() error {
 	c.resp, _ = http.Get(constants.StatusURL)
 	if c.resp.StatusCode == 200 {
 		return nil
@@ -26,16 +26,16 @@ func (c *checkServerFeature) theServerIsStarted() error {
 	return godog.ErrAmbiguous
 }
 
-func (c *checkServerFeature) aClientAsksTheStatus() error {
+func (c *checkServerFeature) aClientRequestsMinecraftProcessStatus() error {
 	c.resp, _ = http.Get(constants.StatusURL)
 	statusCode := c.resp.StatusCode
 	if statusCode == 200 {
 		return nil
 	}
-	return fmt.Errorf("The client was unable to get the status correctly")
+	return fmt.Errorf("The client was unable to get the Minecraft process status correctly")
 }
 
-func (c *checkServerFeature) iShouldTellTheClientTheStatus() error {
+func (c *checkServerFeature) theAPIReturnsMinecraftProcessStatusWithPlayerCount() error {
 	contentType := c.resp.Header.Get("Content-Type")
 	if !strings.Contains(contentType, "application/json") {
 		return fmt.Errorf("expected content type to be application/json but got %s", contentType)
@@ -80,7 +80,7 @@ func ClientAsksTheServerForTheStatusScenarioContext(s *godog.ScenarioContext) {
 	s.After(AfterScenarioHook(tc))
 
 	// Register step definitions
-	s.Given(`^the Minecraft server is running$`, c.theServerIsStarted)
-	s.When(`^a client requests the server status$`, c.aClientAsksTheStatus)
-	s.Then(`^the system returns a status response indicating "online" along with the current player count$`, c.iShouldTellTheClientTheStatus)
+	s.Given(`^the Minecraft server is running$`, c.theMinecraftProcessIsRunning)
+	s.When(`^a client requests the server status$`, c.aClientRequestsMinecraftProcessStatus)
+	s.Then(`^the system returns a status response indicating "online" along with the current player count$`, c.theAPIReturnsMinecraftProcessStatusWithPlayerCount)
 }
