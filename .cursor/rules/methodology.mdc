@@ -3,11 +3,11 @@ description:
 globs: 
 alwaysApply: true
 ---
-Iterate on the code to make changes within 10 minutes.
-Keep changes small and concise.
-Only modify one of two choices: 1) one test case or source files.
-Only one thing should change at a time.
-Explanations should be concise.
-Using TDD, changes will be limited to either only a refactor, only add a failing test, or only write code to pass the test. 
+Only one change per prompt.
+Keep change small and concise.
+Only modify one of two choices: 1) one test case or 2) source files.
+Explanations should be minimal/non-existent.
+Do not explain after running tests.
+TDD: Changes will be limited to either only a refactor, only add a failing test, or only writing as little code as possible to pass the test. 
 Execute tests after the changes.
-Test via `make unit-test` or `make integration-test`
+Test via ONLY running this command `make unit-test` or this command `make integration-test`.
