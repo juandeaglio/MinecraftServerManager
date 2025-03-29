@@ -31,13 +31,19 @@ func (m *MinecraftServer) getPlayers() int {
 
 func (m *MinecraftServer) Start(minecraftServer process.Process) process.Process {
 	m.serverInBackground = minecraftServer
-	m.serverInBackground.Start()
-	if m.serverInBackground.PID() >= 0 {
-		m.started = true
+
+	err := minecraftServer.Start()
+	if err != nil {
+		return nil
 	}
+
+	// Check if the process has a valid PID after starting
+	pid := minecraftServer.PID()
+	m.started = pid > 0
 
 	return minecraftServer
 }
+
 func (m *MinecraftServer) Stop() bool {
 	if m.started {
 		m.started = !m.started

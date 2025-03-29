@@ -25,13 +25,15 @@ type TestContext struct {
 // NewTestContext creates a new test context with initialized dependencies
 func NewTestContext() *TestContext {
 	controls := mcservercontrols.NewControls()
-	router := httprouter.NewHTTPRouter(controls, &process.WinProcess{})
+	winProcess := &process.WinProcess{}
+	router := httprouter.NewHTTPRouter(controls, winProcess)
 	adapter := &httprouteradapter.HTTPRouterAdapter{Router: router}
 
 	return &TestContext{
 		Controls: controls,
 		Router:   router,
 		Adapter:  adapter,
+		Process:  winProcess,
 	}
 }
 

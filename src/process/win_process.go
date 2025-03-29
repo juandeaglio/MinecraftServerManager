@@ -2,6 +2,7 @@ package process
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"syscall"
 )
@@ -14,7 +15,18 @@ type WinProcess struct {
 
 // Started implements Process.
 func (w *WinProcess) Started() bool {
-	return w.PID() > 0
+	// TODO: needs unit test
+	if w.cmd == nil || w.cmd.Process == nil {
+		return false
+	}
+
+	process, err := os.FindProcess(w.cmd.Process.Pid)
+	if err != nil {
+		return false
+	}
+
+	err = process.Signal(syscall.Signal(0))
+	return err == nil
 }
 
 // NewRealProcess initializes a process with a given command.
@@ -58,6 +70,7 @@ func (w *WinProcess) Stop() error {
 		if err != nil {
 			return fmt.Errorf("failed to kill process %s (PID: %d): %w", w.program, pid, err)
 		}
+		// consider removing printf
 		fmt.Printf("Process killed: %s (PID: %d)\n", w.program, pid)
 		// Ensure we clean up the reference
 		w.cmd = nil
