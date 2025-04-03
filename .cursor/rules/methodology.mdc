@@ -11,3 +11,4 @@ Do not explain after running tests.
 TDD: Changes will be limited to either only a refactor, only add a failing test, or only writing as little code as possible to pass the test. 
 Execute tests after the changes.
 Test via ONLY running this command `make unit-test` or this command `make integration-test`.
+Do not include comments unless explicitly told to.
