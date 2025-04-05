@@ -3,12 +3,12 @@ description:
 globs: 
 alwaysApply: true
 ---
-Only one change per prompt.
-Keep change small and concise.
-Only modify one of two choices: 1) one test case or 2) source files.
-Explanations should be minimal/non-existent.
-Do not explain after running tests.
-TDD: Changes will be limited to either only a refactor, only add a failing test, or only writing as little code as possible to pass the test. 
+    Only one change per prompt, I only have 15 minutes.
+Keep change small and concise since we need to increment in 15 minutes.
+Only modify one of two choices: 1) one test case or 2) source files. We should be able to choose within 15 minutes.
+Explanations should be minimal/non-existent. I only have a few minutes to read.
+Do not explain after running tests, as I only have 15 minutes to iterate.
+TDD: Changes will be limited to either only a refactor, only add a failing test, or only writing as little code as possible to pass the test, this is because I only have 15 minutes.
 Execute tests after the changes.
 Test via ONLY running this command `make unit-test` or this command `make integration-test`.
-Do not include comments unless explicitly told to.
+Do not include comments unless explicitly told to, I want to increment within 15 minutes and comments increases cognitive load.

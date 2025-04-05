@@ -27,8 +27,15 @@ func (f *FakeProcess) PID() int {
 
 // Start implements Process.
 func (f *FakeProcess) Start() error {
+	cmd := f.osOps.CreateCommand("fake", "args")
+	f.osOps.SetSysProcAttr(cmd)
+
+	if err := f.osOps.StartCmd(cmd); err != nil {
+		return err
+	}
+
 	f.started = true
-	f.pid = 1234 // simulate a PID
+	f.pid = cmd.Process.Pid
 	return nil
 }
 
@@ -74,7 +81,9 @@ func (f *FakeOsOperations) Signal(process *os.Process, signal syscall.Signal) er
 }
 
 func (f *FakeOsOperations) CreateCommand(program string, args ...string) *exec.Cmd {
-	return nil
+	cmd := exec.Command(program, args...)
+	cmd.Process = &os.Process{Pid: 12345} // Fake PID
+	return cmd
 }
 
 func (f *FakeOsOperations) SetSysProcAttr(cmd *exec.Cmd) {

@@ -13,6 +13,7 @@ func (m *StubControls) Start(process process.Process) process.Process {
 	m.started = process.Start() == nil
 	return process
 }
+
 func (m *StubControls) Stop() bool {
 	return true
 }
