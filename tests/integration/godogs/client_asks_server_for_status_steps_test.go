@@ -72,7 +72,7 @@ func ClientAsksTheServerForTheStatusScenarioContext(s *godog.ScenarioContext) {
 	baseHook := BeforeScenarioWithNotepadHook(tc, "8080")
 	customHook := func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 		// Start notepad process for testing
-		tc.Process = tc.Controls.Start(process.NewWinProcess("notepad.exe"))
+		tc.Process = tc.Controls.Start(process.NewProcess(&process.FakeOsOperations{}, "notepad.exe"))
 		return ctx, nil
 	}
 	s.Before(CombineBeforeHooks(baseHook, customHook))
