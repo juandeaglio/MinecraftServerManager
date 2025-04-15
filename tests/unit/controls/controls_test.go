@@ -22,6 +22,5 @@ func TestStartServer(t *testing.T) {
 func TestOfflineServerStatus(t *testing.T) {
 	controls := mcservercontrols.NewControls(&process.ProcessImpl{})
 
-	// Assert that the server status shows offline
 	assert.Falsef(t, controls.Status().Online, "Server with no PID should report as offline.")
 }
