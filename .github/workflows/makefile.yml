@@ -10,7 +10,6 @@ on:
 jobs:
    test:
     runs-on: windows-latest
-    needs: build
     steps:
     - uses: actions/checkout@v4
 
