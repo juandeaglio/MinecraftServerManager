@@ -5,29 +5,60 @@ import (
 	"minecraftremote/src/rcon"
 )
 
-type Controls interface {
-	Start(process.Process) process.Process
-	Stop() bool
-	Status() *rcon.Status
-	IsStarted() bool
-}
-type ControlsImpl struct {
-	rconAdapter rcon.RCONAdapter
-	started     bool
+type Controls struct {
+	serverInBackground process.Process
+	started            bool
 }
 
-func (c *ControlsImpl) Start(p process.Process) process.Process {
-	c.started = true
-	p.Start()
-	return p
+// IsStarted implements controls.Controls.
+func (m *Controls) IsStarted() bool {
+	if m.serverInBackground == nil {
+		return false
+	}
+	return m.serverInBackground.Started()
 }
-func (c *ControlsImpl) Stop() bool {
-	c.started = false
-	return true
+
+func (m *Controls) Status() *rcon.Status {
+	return &rcon.Status{
+		Players: m.getPlayers(),
+		Online:  m.IsStarted(),
+	}
 }
-func (c *ControlsImpl) Status() *rcon.Status {
-	return c.rconAdapter.GetStatus()
+
+func (m *Controls) getPlayers() int {
+	return 0
 }
-func (c *ControlsImpl) IsStarted() bool {
-	return
+
+func (m *Controls) Start(minecraftServer process.Process) process.Process {
+	m.serverInBackground = minecraftServer
+
+	err := minecraftServer.Start()
+	if err != nil {
+		return nil
+	}
+
+	pid := minecraftServer.PID()
+	m.started = isPIDValid(pid)
+
+	return minecraftServer
+}
+
+func isPIDValid(pid int) bool {
+	return pid > 0
+}
+
+func (m *Controls) Stop() bool {
+	if m.started {
+		m.started = !m.started
+		return !m.started
+	}
+	return false
+}
+
+func NewControls(process ...process.Process) *Controls {
+	controls := &Controls{}
+	if len(process) > 0 {
+		controls.serverInBackground = process[0]
+	}
+	return controls
 }

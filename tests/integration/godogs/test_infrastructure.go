@@ -3,7 +3,7 @@ package integrationtest
 import (
 	"context"
 	"log"
-	"minecraftremote/src/controls/mcservercontrols"
+	"minecraftremote/src/controls"
 	"minecraftremote/src/httprouter"
 	"minecraftremote/src/httprouteradapter"
 	"minecraftremote/src/process"
@@ -15,7 +15,7 @@ import (
 
 // TestContext holds all shared test state and dependencies
 type TestContext struct {
-	Controls *mcservercontrols.MinecraftServer
+	Controls *controls.Controls
 	Process  process.Process
 	Server   *http.Server
 	Router   *httprouter.ServerRouter
@@ -24,7 +24,7 @@ type TestContext struct {
 
 // NewTestContext creates a new test context with initialized dependencies
 func NewTestContext() *TestContext {
-	controls := mcservercontrols.NewControls(&process.ProcessImpl{})
+	controls := controls.NewControls(&process.ProcessImpl{})
 	router := httprouter.NewHTTPRouter(controls, &process.ProcessImpl{})
 	adapter := &httprouteradapter.HTTPRouterAdapter{Router: router}
 

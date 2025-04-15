@@ -18,10 +18,10 @@ type HTTPRouter interface {
 
 type ServerRouter struct {
 	proc    process.Process
-	handler controls.Controls
+	handler *controls.Controls
 }
 
-func NewHTTPRouter(controls controls.Controls, proc process.Process) *ServerRouter {
+func NewHTTPRouter(controls *controls.Controls, proc process.Process) *ServerRouter {
 	return &ServerRouter{handler: controls, proc: proc}
 }
 
