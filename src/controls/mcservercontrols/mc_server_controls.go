@@ -37,11 +37,14 @@ func (m *MinecraftServer) Start(minecraftServer process.Process) process.Process
 		return nil
 	}
 
-	// Check if the process has a valid PID after starting
 	pid := minecraftServer.PID()
-	m.started = pid > 0
+	m.started = isPIDValid(pid)
 
 	return minecraftServer
+}
+
+func isPIDValid(pid int) bool {
+	return pid > 0
 }
 
 func (m *MinecraftServer) Stop() bool {
@@ -52,8 +55,6 @@ func (m *MinecraftServer) Stop() bool {
 	return false
 }
 
-// NewControls creates a new MinecraftServer instance.
-// If a process is provided, it will be used as the server process.
 func NewControls(process ...process.Process) *MinecraftServer {
 	server := &MinecraftServer{}
 	if len(process) > 0 {
