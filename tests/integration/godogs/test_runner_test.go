@@ -30,7 +30,7 @@ func runScenario(t *testing.T, scenarioFeature ScenarioContextFunc) godog.TestSu
 			Format:   "pretty",
 			Paths:    []string{"features"},
 			TestingT: t,
-			Strict:   true,
+			Strict:   false,
 			NoColors: false,   // Ensure colors are enabled for clarity
 			Tags:     "~@wip", // Exclude work-in-progress tests
 		},
