@@ -77,6 +77,13 @@ func (h *ServerRouter) handleStop(req *http.Request) *http.Response {
 
 // handleStatus handles server status requests
 func (h *ServerRouter) handleStatus(req *http.Request) *http.Response {
+	if h.handler.Status() == nil || h.proc == nil {
+		return &http.Response{
+			StatusCode: 500,
+			Status:     "Internal Server Error",
+		}
+	}
+
 	body, err := json.Marshal(h.handler.Status())
 	if err != nil {
 		return &http.Response{

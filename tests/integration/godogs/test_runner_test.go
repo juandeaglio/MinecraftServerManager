@@ -6,29 +6,28 @@ import (
 	"github.com/cucumber/godog"
 )
 
-func TestScenariosWithStartedServer(t *testing.T) {
-
-	// Combine both scenario contexts into one initializer
-	combinedScenarioInitializer := func(s *godog.ScenarioContext) {
-		ClientAsksTheServerForTheStatusScenarioContext(s)
-		ClientStartsServer(s)
-	}
-
-	suite := runScenario(t, combinedScenarioInitializer)
-
+func TestServerStatusScenarios(t *testing.T) {
+	suite := runScenario(t, ClientAsksTheServerForTheStatusScenarioContext, "features/control_server.feature:3")
 	if status := suite.Run(); status != 0 {
-		t.Fatalf("Feature tests failed with status: %d", status)
+		t.Fatalf("Server status feature tests failed with status: %d", status)
 	}
 }
 
-func runScenario(t *testing.T, scenarioFeature ScenarioContextFunc) godog.TestSuite {
+func TestServerStartScenarios(t *testing.T) {
+	suite := runScenario(t, ClientStartsServer, "features/control_server.feature:8")
+	if status := suite.Run(); status != 0 {
+		t.Fatalf("Server start feature tests failed with status: %d", status)
+	}
+}
+
+func runScenario(t *testing.T, scenarioFeature ScenarioContextFunc, featurePath string) godog.TestSuite {
 	return godog.TestSuite{
 		ScenarioInitializer: func(s *godog.ScenarioContext) {
 			scenarioFeature(s)
 		},
 		Options: &godog.Options{
 			Format:   "pretty",
-			Paths:    []string{"features"},
+			Paths:    []string{featurePath},
 			TestingT: t,
 			Strict:   false,
 			NoColors: false,   // Ensure colors are enabled for clarity

@@ -8,6 +8,7 @@ import (
 type Controls struct {
 	serverInBackground process.Process
 	started            bool
+	rcon               rcon.RCONAdapter
 }
 
 // IsStarted implements controls.Controls.
@@ -19,10 +20,12 @@ func (m *Controls) IsStarted() bool {
 }
 
 func (m *Controls) Status() *rcon.Status {
-	return &rcon.Status{
-		Players: m.getPlayers(),
-		Online:  m.IsStarted(),
+	if m.rcon == nil {
+		return &rcon.Status{
+			Online: m.IsStarted(),
+		}
 	}
+	return m.rcon.GetStatus()
 }
 
 func (m *Controls) getPlayers() int {
@@ -55,10 +58,11 @@ func (m *Controls) Stop() bool {
 	return false
 }
 
-func NewControls(process ...process.Process) *Controls {
+func NewControls(rcon rcon.RCONAdapter, process ...process.Process) *Controls {
 	controls := &Controls{}
 	if len(process) > 0 {
 		controls.serverInBackground = process[0]
 	}
+	controls.rcon = rcon
 	return controls
 }

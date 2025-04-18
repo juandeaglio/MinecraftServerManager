@@ -7,6 +7,7 @@ import (
 	"minecraftremote/src/httprouter"
 	"minecraftremote/src/httprouteradapter"
 	"minecraftremote/src/process"
+	"minecraftremote/src/rcon"
 	"net/http"
 	"time"
 
@@ -23,8 +24,11 @@ type TestContext struct {
 }
 
 // NewTestContext creates a new test context with initialized dependencies
-func NewTestContext() *TestContext {
-	controls := controls.NewControls(&process.ProcessImpl{})
+func NewTestContext(rconAdapter rcon.RCONAdapter) *TestContext {
+	if rconAdapter == nil {
+		rconAdapter = rcon.NewMinecraftRCONAdapter()
+	}
+	controls := controls.NewControls(rconAdapter, &process.ProcessImpl{})
 	router := httprouter.NewHTTPRouter(controls, &process.ProcessImpl{})
 	adapter := &httprouteradapter.HTTPRouterAdapter{Router: router}
 

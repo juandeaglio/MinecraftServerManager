@@ -1,9 +1,11 @@
 package httproutertests
 
 import (
+	"encoding/json"
 	"minecraftremote/src/controls"
 	"minecraftremote/src/httprouter"
 	"minecraftremote/src/process"
+	"minecraftremote/src/rcon"
 	"minecraftremote/tests/unit/httpdriver/cannedrequests"
 	"testing"
 
@@ -11,27 +13,32 @@ import (
 )
 
 func TestStartServer(t *testing.T) {
-	router := httprouter.NewHTTPRouter(controls.NewControls(), process.NewProcess(&process.FakeOsOperations{}, "fake", "args"))
+	router := httprouter.NewHTTPRouter(controls.NewControls(nil), process.NewProcess(&process.FakeOsOperations{}, "fake", "args"))
 	resp := router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
-	assert.Equalf(t, resp.StatusCode, 200, "Server did not start successfully")
+	assert.Equalf(t, 200, resp.StatusCode, "Server did not start successfully")
 }
 
 func TestStopServer(t *testing.T) {
-	router := httprouter.NewHTTPRouter(controls.NewControls(), process.NewProcess(&process.FakeOsOperations{}, "fake", "args"))
+	router := httprouter.NewHTTPRouter(controls.NewControls(nil), process.NewProcess(&process.FakeOsOperations{}, "fake", "args"))
 	router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
 	resp := router.HandleHTTP(cannedrequests.NewStopRequest().ToHTTPRequest())
-	assert.Equalf(t, resp.StatusCode, 200, "Server did not stop successfully, maybe it did not start?")
+	assert.Equalf(t, 200, resp.StatusCode, "Server did not stop successfully, maybe it did not start?")
 }
 
 func TestServerStatistics(t *testing.T) {
-	router := httprouter.NewHTTPRouter(controls.NewControls(), process.NewProcess(&process.FakeOsOperations{}, "fake", "args"))
+	router := httprouter.NewHTTPRouter(controls.NewControls(nil), process.NewProcess(&process.FakeOsOperations{}, "fake", "args"))
 	router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
 	resp := router.HandleHTTP(cannedrequests.NewStatusRequest().ToHTTPRequest())
-	assert.Equalf(t, resp.StatusCode, 200, "Server did not get status successfully, maybe it did not start?")
+	assert.Equalf(t, 200, resp.StatusCode, "Server did not get status successfully, maybe it did not start?")
+
+	var status map[string]interface{}
+	err := json.NewDecoder(resp.Body).Decode(&status)
+	assert.NoError(t, err)
+	assert.Truef(t, status["Online"].(bool), "Server should be online")
 }
 
-// func TestServerStatisticsWhenServerIsOffline(t *testing.T) {
-// 	router := httprouter.NewHTTPRouter(controls.NewControls(), nil)
-// 	resp := router.HandleHTTP(cannedrequests.NewStatusRequest().ToHTTPRequest())
-// 	assert.Equalf(t, resp.StatusCode, 500, "Server is offline, but status endpoint returned 200")
-// }
+func TestServerStatisticsWhenServerIsOffline(t *testing.T) {
+	router := httprouter.NewHTTPRouter(controls.NewControls(rcon.NewStubRCONAdapter()), nil)
+	resp := router.HandleHTTP(cannedrequests.NewStatusRequest().ToHTTPRequest())
+	assert.Equalf(t, 500, resp.StatusCode, "Server is offline, but status endpoint returned 200")
+}

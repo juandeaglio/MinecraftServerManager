@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"minecraftremote/src/process"
+	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/constants"
 	"net/http"
 	"strings"
@@ -23,7 +24,7 @@ func (c *checkServerFeature) theMinecraftProcessIsRunning() error {
 	if c.resp.StatusCode == 200 {
 		return nil
 	}
-	return godog.ErrAmbiguous
+	return fmt.Errorf("server is not running - status code: %d", c.resp.StatusCode)
 }
 
 func (c *checkServerFeature) aClientRequestsMinecraftProcessStatus() error {
@@ -64,14 +65,12 @@ func (c *checkServerFeature) theAPIReturnsMinecraftProcessStatusWithPlayerCount(
 }
 
 func ClientAsksTheServerForTheStatusScenarioContext(s *godog.ScenarioContext) {
-	tc := NewTestContext()
+	tc := NewTestContext(rcon.NewStubRCONAdapter())
 	c := &checkServerFeature{testContext: tc}
 
 	// Register hooks with common infrastructure
-	// Replace the basic hook with combined hooks
 	baseHook := BeforeScenarioWithNotepadHook(tc, "8080")
 	customHook := func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-		// Start notepad process for testing
 		tc.Process = tc.Controls.Start(process.NewProcess(&process.FakeOsOperations{}, "notepad.exe"))
 		return ctx, nil
 	}
@@ -80,7 +79,7 @@ func ClientAsksTheServerForTheStatusScenarioContext(s *godog.ScenarioContext) {
 	s.After(AfterScenarioHook(tc))
 
 	// Register step definitions
-	s.Given(`^the Minecraft server is running$`, c.theMinecraftProcessIsRunning)
+	s.Given(`^the Minecraft server is running and ready$`, c.theMinecraftProcessIsRunning)
 	s.When(`^a client requests the server status$`, c.aClientRequestsMinecraftProcessStatus)
 	s.Then(`^the system returns a status response indicating "online" along with the current player count$`, c.theAPIReturnsMinecraftProcessStatusWithPlayerCount)
 }

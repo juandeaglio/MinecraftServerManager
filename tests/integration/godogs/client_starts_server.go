@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
+	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/constants"
 
 	"github.com/cucumber/godog"
@@ -18,8 +20,6 @@ type startServerFeature struct {
 
 func (c *startServerFeature) theMinecraftProcessIsNotRunning() error {
 	// Check status endpoint of our HTTP API server
-	return godog.ErrPending
-
 	resp, err := http.Get(constants.StatusURL)
 	if err != nil {
 		return fmt.Errorf("failed to connect to HTTP API status endpoint: %v", err)
@@ -52,7 +52,9 @@ func (c *startServerFeature) theMinecraftProcessShouldBeRunning() error {
 }
 
 func ClientStartsServer(s *godog.ScenarioContext) {
-	tc := NewTestContext()
+	rconAdapter := rcon.NewMinecraftRCONAdapter()
+	rconAdapter.WithTimeout(1 * time.Second)
+	tc := NewTestContext(rconAdapter)
 	c := &startServerFeature{testContext: tc}
 
 	// Register hooks with common infrastructure
