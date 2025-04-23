@@ -24,19 +24,20 @@ type TestContext struct {
 }
 
 // NewTestContext creates a new test context with initialized dependencies
-func NewTestContext(rconAdapter rcon.RCONAdapter) *TestContext {
+func NewTestContext(rconAdapter rcon.RCONAdapter, osOperations process.OsOperations, program string, args ...string) *TestContext {
 	if rconAdapter == nil {
 		rconAdapter = rcon.NewMinecraftRCONAdapter()
 	}
-	controls := controls.NewControls(rconAdapter, &process.ProcessImpl{})
-	router := httprouter.NewHTTPRouter(controls, &process.ProcessImpl{})
+	process := process.NewProcess(osOperations, program, args...)
+	controls := controls.NewControls(rconAdapter, process)
+	router := httprouter.NewHTTPRouter(controls, process)
 	adapter := &httprouteradapter.HTTPRouterAdapter{Router: router}
 
 	return &TestContext{
 		Controls: controls,
 		Router:   router,
 		Adapter:  adapter,
-		Process:  &process.ProcessImpl{},
+		Process:  process,
 	}
 }
 

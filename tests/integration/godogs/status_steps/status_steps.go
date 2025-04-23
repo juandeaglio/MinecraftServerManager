@@ -71,7 +71,7 @@ func (c *checkServerFeature) theAPIReturnsMinecraftProcessStatusWithPlayerCount(
 
 // set up is a bit complex
 func ClientAsksTheServerForTheStatusScenarioContext(s *godog.ScenarioContext) {
-	tc := test_infrastructure.NewTestContext(rcon.NewStubRCONAdapter())
+	tc := test_infrastructure.NewTestContext(rcon.NewStubRCONAdapter(), &process.FakeOsOperations{}, "notepad.exe")
 	c := &checkServerFeature{testContext: tc}
 
 	// Register hooks with common infrastructure

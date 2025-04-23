@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"minecraftremote/src/process"
 	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/constants"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
@@ -45,7 +46,11 @@ func (c *startServerFeature) aClientRequestsToStartMinecraftProcess() error {
 	}
 	defer resp.Body.Close()
 
-	return nil
+	if resp.StatusCode == 200 {
+		return nil
+	}
+
+	return fmt.Errorf("failed to start Minecraft process, status code: %v", resp.StatusCode)
 }
 
 func (c *startServerFeature) theMinecraftProcessShouldBeRunning() error {
@@ -57,7 +62,7 @@ func (c *startServerFeature) theMinecraftProcessShouldBeRunning() error {
 func ClientStartsServer(s *godog.ScenarioContext) {
 	rconAdapter := rcon.NewMinecraftRCONAdapter()
 	rconAdapter.WithTimeout(1 * time.Second)
-	tc := test_infrastructure.NewTestContext(rconAdapter)
+	tc := test_infrastructure.NewTestContext(rconAdapter, &process.WindowsOsOperations{}, "notepad.exe")
 	c := &startServerFeature{testContext: tc}
 
 	// Register hooks with common infrastructure
