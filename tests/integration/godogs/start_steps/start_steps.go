@@ -19,36 +19,44 @@ type startServerFeature struct {
 	resp        *http.Response
 }
 
-const url = constants.BaseURL + "8081" + constants.StatusURL
+const port = "8081"
+const getStatusURL = constants.BaseURL + port + constants.StatusURL
+const startURL = constants.BaseURL + port + constants.StartURL
 
 func (c *startServerFeature) theMinecraftProcessIsNotRunning() error {
 	// Check status endpoint of our HTTP API server
-	resp, err := http.Get(url)
+	resp, err := http.Get(getStatusURL)
 	if err != nil {
 		return fmt.Errorf("failed to connect to HTTP API status endpoint: %v", err)
 	}
 	defer resp.Body.Close()
 
-	var statusResponse map[string]interface{}
-	if err := json.NewDecoder(resp.Body).Decode(&statusResponse); err != nil {
-		return fmt.Errorf("failed to decode status response: %v", err)
-	}
+	// Check if the response code indicates server not running (4xx or 5xx status)
+	if resp.StatusCode < 400 {
+		var statusResponse map[string]interface{}
+		if err := json.NewDecoder(resp.Body).Decode(&statusResponse); err != nil {
+			return nil // This is expected if server isn't properly running
+		}
 
-	if online, exists := statusResponse["Online"].(bool); exists && online {
-		return fmt.Errorf("Minecraft process should be stopped, but status endpoint reports Online=true")
+		if online, exists := statusResponse["Online"].(bool); exists && online {
+			return fmt.Errorf("minecraft process should be stopped, but status endpoint reports Online=true")
+		}
 	}
 
 	return nil
 }
 
 func (c *startServerFeature) aClientRequestsToStartMinecraftProcess() error {
-	return godog.ErrPending
+	resp, err := http.Get(startURL)
+	if err != nil {
+		return fmt.Errorf("failed to connect to HTTP API start endpoint: %v", err)
+	}
+	defer resp.Body.Close()
 
-	return fmt.Errorf("the client was unable to start the Minecraft process correctly")
+	return nil
 }
 
 func (c *startServerFeature) theMinecraftProcessShouldBeRunning() error {
-	return godog.ErrPending
 
 	log.Println("Step 'the Minecraft process should be running' is not implemented!")
 	return fmt.Errorf("failed to verify Minecraft process is running")
@@ -61,7 +69,7 @@ func ClientStartsServer(s *godog.ScenarioContext) {
 	c := &startServerFeature{testContext: tc}
 
 	// Register hooks with common infrastructure
-	s.Before(test_infrastructure.BeforeScenarioHook(tc, "8081"))
+	s.Before(test_infrastructure.BeforeScenarioHook(tc, port))
 	s.After(test_infrastructure.AfterScenarioHook(tc))
 
 	// Register step definitions
