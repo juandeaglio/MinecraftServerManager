@@ -49,6 +49,12 @@ func (h *ServerRouter) HandleHTTP(req *http.Request) *http.Response {
 // handleStart handles server start requests
 func (h *ServerRouter) handleStart(req *http.Request) *http.Response {
 	process := h.handler.Start(h.proc)
+	if process == nil {
+		return &http.Response{
+			StatusCode: 500,
+			Status:     "Internal Server Error",
+		}
+	}
 	if process.PID() != -1 {
 		return &http.Response{
 			StatusCode: 200,
@@ -79,8 +85,8 @@ func (h *ServerRouter) handleStop(req *http.Request) *http.Response {
 func (h *ServerRouter) handleStatus(req *http.Request) *http.Response {
 	if h.handler.Status() == nil || h.proc == nil {
 		return &http.Response{
-			StatusCode: 500,
-			Status:     "Internal Server Error",
+			StatusCode: 404,
+			Status:     "Server is not running",
 		}
 	}
 

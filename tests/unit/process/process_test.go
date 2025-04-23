@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"minecraftremote/src/process"
+	"minecraftremote/tests/unit/process/brokenosoperations"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -18,7 +19,7 @@ func TestProcess(t *testing.T) {
 }
 
 func TestProcessError(t *testing.T) {
-	fakeProcess := process.NewProcess(&brokenOsOperations{}, "fake", "args")
+	fakeProcess := process.NewProcess(&brokenosoperations.BrokenOsOperations{}, "fake", "args")
 	err := fakeProcess.Start()
 	assert.Error(t, err)
 }
