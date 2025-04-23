@@ -1,7 +1,6 @@
 package start_steps
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -32,15 +31,8 @@ func (c *startServerFeature) theMinecraftProcessIsNotRunning() error {
 	defer resp.Body.Close()
 
 	// Check if the response code indicates server not running (4xx or 5xx status)
-	if resp.StatusCode < 400 {
-		var statusResponse map[string]interface{}
-		if err := json.NewDecoder(resp.Body).Decode(&statusResponse); err != nil {
-			return nil // This is expected if server isn't properly running
-		}
-
-		if online, exists := statusResponse["Online"].(bool); exists && online {
-			return fmt.Errorf("minecraft process should be stopped, but status endpoint reports Online=true")
-		}
+	if resp.StatusCode != 404 {
+		return fmt.Errorf("minecraft process should be stopped, but status endpoint reports a successful status but instead reports %v", resp.StatusCode)
 	}
 
 	return nil

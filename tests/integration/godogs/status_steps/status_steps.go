@@ -22,6 +22,8 @@ type checkServerFeature struct {
 
 const url = constants.BaseURL + "8080" + constants.StatusURL
 
+// steps are verbose
+
 func (c *checkServerFeature) theMinecraftProcessIsRunning() error {
 	c.resp, _ = http.Get(url)
 	if c.resp.StatusCode == 200 {
@@ -67,6 +69,7 @@ func (c *checkServerFeature) theAPIReturnsMinecraftProcessStatusWithPlayerCount(
 	return nil
 }
 
+// set up is a bit complex
 func ClientAsksTheServerForTheStatusScenarioContext(s *godog.ScenarioContext) {
 	tc := test_infrastructure.NewTestContext(rcon.NewStubRCONAdapter())
 	c := &checkServerFeature{testContext: tc}

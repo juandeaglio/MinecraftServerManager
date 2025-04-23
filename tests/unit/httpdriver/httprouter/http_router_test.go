@@ -7,6 +7,7 @@ import (
 	"minecraftremote/src/process"
 	"minecraftremote/src/rcon"
 	"minecraftremote/tests/unit/httpdriver/cannedrequests"
+	"minecraftremote/tests/unit/process/brokenosoperations"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,6 +17,12 @@ func TestStartServer(t *testing.T) {
 	router := httprouter.NewHTTPRouter(controls.NewControls(nil), process.NewProcess(&process.FakeOsOperations{}, "fake", "args"))
 	resp := router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
 	assert.Equalf(t, 200, resp.StatusCode, "Server did not start successfully")
+}
+
+func TestFailtoStartServer(t *testing.T) {
+	router := httprouter.NewHTTPRouter(controls.NewControls(nil), process.NewProcess(&brokenosoperations.BrokenOsOperations{}, "fake", "args"))
+	resp := router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
+	assert.Equalf(t, 500, resp.StatusCode, "Server did not start successfully")
 }
 
 func TestStopServer(t *testing.T) {
@@ -40,5 +47,5 @@ func TestServerStatistics(t *testing.T) {
 func TestServerStatisticsWhenServerIsOffline(t *testing.T) {
 	router := httprouter.NewHTTPRouter(controls.NewControls(rcon.NewStubRCONAdapter()), nil)
 	resp := router.HandleHTTP(cannedrequests.NewStatusRequest().ToHTTPRequest())
-	assert.Equalf(t, 500, resp.StatusCode, "Server is offline, but status endpoint returned 200")
+	assert.Equalf(t, 404, resp.StatusCode, "Server is offline, but status endpoint returned 200")
 }

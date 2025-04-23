@@ -109,7 +109,7 @@ func waitForServerReady(url string, timeout time.Duration) {
 	deadline := time.Now().Add(timeout)
 	for time.Now().Before(deadline) {
 		resp, err := http.Get(url)
-		if err == nil && resp.StatusCode == http.StatusOK {
+		if err == nil {
 			resp.Body.Close()
 			return
 		}
