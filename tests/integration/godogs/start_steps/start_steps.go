@@ -1,4 +1,4 @@
-package integrationtest
+package start_steps
 
 import (
 	"encoding/json"
@@ -9,18 +9,21 @@ import (
 
 	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/constants"
+	"minecraftremote/tests/integration/godogs/test_infrastructure"
 
 	"github.com/cucumber/godog"
 )
 
 type startServerFeature struct {
-	testContext *TestContext
+	testContext *test_infrastructure.TestContext
 	resp        *http.Response
 }
 
+const url = constants.BaseURL + "8081" + constants.StatusURL
+
 func (c *startServerFeature) theMinecraftProcessIsNotRunning() error {
 	// Check status endpoint of our HTTP API server
-	resp, err := http.Get(constants.StatusURL)
+	resp, err := http.Get(url)
 	if err != nil {
 		return fmt.Errorf("failed to connect to HTTP API status endpoint: %v", err)
 	}
@@ -54,12 +57,12 @@ func (c *startServerFeature) theMinecraftProcessShouldBeRunning() error {
 func ClientStartsServer(s *godog.ScenarioContext) {
 	rconAdapter := rcon.NewMinecraftRCONAdapter()
 	rconAdapter.WithTimeout(1 * time.Second)
-	tc := NewTestContext(rconAdapter)
+	tc := test_infrastructure.NewTestContext(rconAdapter)
 	c := &startServerFeature{testContext: tc}
 
 	// Register hooks with common infrastructure
-	s.Before(BeforeScenarioHook(tc, "8081"))
-	s.After(AfterScenarioHook(tc))
+	s.Before(test_infrastructure.BeforeScenarioHook(tc, "8081"))
+	s.After(test_infrastructure.AfterScenarioHook(tc))
 
 	// Register step definitions
 	s.Given(`^the Minecraft server isn't started$`, c.theMinecraftProcessIsNotRunning)

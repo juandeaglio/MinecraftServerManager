@@ -1,3 +1,4 @@
 package constants
 
-const StatusURL = "http://localhost:8080/status"
+const BaseURL = "http://localhost:"
+const StatusURL = "/status"

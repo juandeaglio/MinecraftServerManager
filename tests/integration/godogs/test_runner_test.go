@@ -1,20 +1,22 @@
-package integrationtest
+package test_runner
 
 import (
+	"minecraftremote/tests/integration/godogs/start_steps"
+	"minecraftremote/tests/integration/godogs/status_steps"
 	"testing"
 
 	"github.com/cucumber/godog"
 )
 
 func TestServerStatusScenarios(t *testing.T) {
-	suite := runScenario(t, ClientAsksTheServerForTheStatusScenarioContext, "features/control_server.feature:3")
+	suite := runScenario(t, status_steps.ClientAsksTheServerForTheStatusScenarioContext, "features/control_server.feature:3")
 	if status := suite.Run(); status != 0 {
 		t.Fatalf("Server status feature tests failed with status: %d", status)
 	}
 }
 
 func TestServerStartScenarios(t *testing.T) {
-	suite := runScenario(t, ClientStartsServer, "features/control_server.feature:8")
+	suite := runScenario(t, start_steps.ClientStartsServer, "features/control_server.feature:8")
 	if status := suite.Run(); status != 0 {
 		t.Fatalf("Server start feature tests failed with status: %d", status)
 	}

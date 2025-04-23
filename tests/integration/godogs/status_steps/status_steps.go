@@ -1,4 +1,4 @@
-package integrationtest
+package status_steps
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"minecraftremote/src/process"
 	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/constants"
+	"minecraftremote/tests/integration/godogs/test_infrastructure"
 	"net/http"
 	"strings"
 
@@ -15,12 +16,14 @@ import (
 )
 
 type checkServerFeature struct {
-	testContext *TestContext
+	testContext *test_infrastructure.TestContext
 	resp        *http.Response
 }
 
+const url = constants.BaseURL + "8080" + constants.StatusURL
+
 func (c *checkServerFeature) theMinecraftProcessIsRunning() error {
-	c.resp, _ = http.Get(constants.StatusURL)
+	c.resp, _ = http.Get(url)
 	if c.resp.StatusCode == 200 {
 		return nil
 	}
@@ -28,7 +31,7 @@ func (c *checkServerFeature) theMinecraftProcessIsRunning() error {
 }
 
 func (c *checkServerFeature) aClientRequestsMinecraftProcessStatus() error {
-	c.resp, _ = http.Get(constants.StatusURL)
+	c.resp, _ = http.Get(url)
 	statusCode := c.resp.StatusCode
 	if statusCode == 200 {
 		return nil
@@ -65,18 +68,18 @@ func (c *checkServerFeature) theAPIReturnsMinecraftProcessStatusWithPlayerCount(
 }
 
 func ClientAsksTheServerForTheStatusScenarioContext(s *godog.ScenarioContext) {
-	tc := NewTestContext(rcon.NewStubRCONAdapter())
+	tc := test_infrastructure.NewTestContext(rcon.NewStubRCONAdapter())
 	c := &checkServerFeature{testContext: tc}
 
 	// Register hooks with common infrastructure
-	baseHook := BeforeScenarioWithNotepadHook(tc, "8080")
+	baseHook := test_infrastructure.BeforeScenarioWithNotepadHook(tc, "8080")
 	customHook := func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 		tc.Process = tc.Controls.Start(process.NewProcess(&process.FakeOsOperations{}, "notepad.exe"))
 		return ctx, nil
 	}
-	s.Before(CombineBeforeHooks(baseHook, customHook))
+	s.Before(test_infrastructure.CombineBeforeHooks(baseHook, customHook))
 
-	s.After(AfterScenarioHook(tc))
+	s.After(test_infrastructure.AfterScenarioHook(tc))
 
 	// Register step definitions
 	s.Given(`^the Minecraft server is running and ready$`, c.theMinecraftProcessIsRunning)

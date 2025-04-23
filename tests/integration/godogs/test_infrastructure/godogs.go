@@ -1,4 +1,4 @@
-package integrationtest
+package test_infrastructure
 
 // Godogs available to eat
 var Godogs int
