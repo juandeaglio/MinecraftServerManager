@@ -9,7 +9,7 @@ import (
 )
 
 func TestServerStatusScenarios(t *testing.T) {
-	suite := runScenario(t, status_steps.ClientAsksTheServerForTheStatusScenarioContext, "features/control_server.feature:3")
+	suite := runScenario(t, status_steps.ServerStatusScenarioContext, "features/control_server.feature:3")
 	if status := suite.Run(); status != 0 {
 		t.Fatalf("Server status feature tests failed with status: %d", status)
 	}

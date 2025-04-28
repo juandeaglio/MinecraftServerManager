@@ -3,4 +3,15 @@ description:
 globs: 
 alwaysApply: true
 ---
-I only have 15 minutes.
+We have exactly 15 minutes to complete this task.
+[CONTEXT] I'm working on a minecraft server manager with a unit-tested codebase written in Golang and need this to integrate with Windows, Minecraft's RCON protocol, and the HTTP REST API that is being developed.
+[SIGNAL UNCERTAINTY] When uncertain, write [UNSURE: reason] rather than guessing.
+[STRATEGIC CONTEXT] This fits into the larger goal of writing initial BDD test cases found in tests>integration>godocs>features, prioritize that alignment.
+[MEASURABLE] The success criteria are small iterations, unit tests, and integration tests always passing or nearly always passing.
+[STEP SIZE] This should be a single logical step - nothing more complex than 50 lines of code.
+[PAIR PERSPECTIVE] Act as my expert pair programmer who prioritizes concise code snippets rather than one-shot completion.
+[FEEDBACK LOOP] After this output, we'll test against integration & unit tests and revise accordingly.
+[DEPENDENCY] This builds on the minecraft server RCON dependency, Windows OS operations, and REST/HTTP, maintain consistency with that approach.
+[DEPLOYMENT] This server runs as an HTTP listener server on a Windows machine. I currently deploy locally.
+[TRADE-OFFS] When facing a choice between making a larger change and breaking tests and making a small change but not implementing everything fully, prefer the smaller & more complete change because tests must pass.
+[EXIT STRATEGY] If completion isn't possible within 15 minutes, deliver review the task-at-hand and suggest an alternative approach instead.

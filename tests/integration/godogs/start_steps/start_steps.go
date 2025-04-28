@@ -25,11 +25,7 @@ const startURL = constants.BaseURL + port + constants.StartURL
 
 func (c *startServerFeature) theMinecraftProcessIsNotRunning() error {
 	// Check status endpoint of our HTTP API server
-	resp, err := http.Get(getStatusURL)
-	if err != nil {
-		return fmt.Errorf("failed to connect to HTTP API status endpoint: %v", err)
-	}
-	defer resp.Body.Close()
+	resp, _ := http.Get(getStatusURL)
 
 	// Check if the response code indicates server not running (4xx or 5xx status)
 	if resp.StatusCode != 404 {
@@ -40,16 +36,11 @@ func (c *startServerFeature) theMinecraftProcessIsNotRunning() error {
 }
 
 func (c *startServerFeature) aClientRequestsToStartMinecraftProcess() error {
-	resp, err := http.Get(startURL)
-	if err != nil {
-		return fmt.Errorf("failed to connect to HTTP API start endpoint: %v", err)
-	}
-	defer resp.Body.Close()
+	resp, _ := http.Get(startURL)
 
 	if resp.StatusCode == 200 {
 		return nil
 	}
-
 	return fmt.Errorf("failed to start Minecraft process, status code: %v", resp.StatusCode)
 }
 
