@@ -32,7 +32,7 @@ func TestStopServer(t *testing.T) {
 	assert.Equalf(t, 200, resp.StatusCode, "Server did not stop successfully, maybe it did not start?")
 }
 
-func TestServerStatistics(t *testing.T) {
+func TestServerStatus(t *testing.T) {
 	router := httprouter.NewHTTPRouter(controls.NewControls(nil), process.NewProcess(&process.FakeOsOperations{}, "fake", "args"))
 	router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
 	resp := router.HandleHTTP(cannedrequests.NewStatusRequest().ToHTTPRequest())
@@ -44,7 +44,7 @@ func TestServerStatistics(t *testing.T) {
 	assert.Truef(t, status["Online"].(bool), "Server should be online")
 }
 
-func TestServerStatisticsWhenServerIsOffline(t *testing.T) {
+func TestServerStatusWhenServerIsOffline(t *testing.T) {
 	router := httprouter.NewHTTPRouter(controls.NewControls(rcon.NewStubRCONAdapter()), nil)
 	resp := router.HandleHTTP(cannedrequests.NewStatusRequest().ToHTTPRequest())
 	assert.Equalf(t, 404, resp.StatusCode, "Server is offline, but status endpoint returned 200")

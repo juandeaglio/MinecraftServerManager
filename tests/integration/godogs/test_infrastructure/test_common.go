@@ -20,8 +20,8 @@ func startServerWithRouter(adapter *httprouteradapter.HTTPRouterAdapter, port st
 	server := &http.Server{
 		Addr:         ":" + port,
 		Handler:      adapter, // Use your router's HandleHTTP as the handler
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  1 * time.Second,
+		WriteTimeout: 1 * time.Second,
 	}
 
 	// Start the server in a goroutine

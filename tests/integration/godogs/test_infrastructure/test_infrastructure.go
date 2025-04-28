@@ -46,7 +46,6 @@ func BeforeScenarioHook(tc *TestContext, port string) func(ctx context.Context, 
 		log.Printf("Running scenario: %s", sc.Name)
 		tc.Server = startServerWithRouter(tc.Adapter, port)
 
-		// Wait for server to be ready
 		waitForServerReady("http://localhost:"+port+"/status", 5*time.Second)
 
 		return ctx, nil
@@ -59,7 +58,6 @@ func BeforeScenarioWithNotepadHook(tc *TestContext, port string) func(ctx contex
 		log.Printf("Running scenario: %s", sc.Name)
 		tc.Server = startServerWithRouter(tc.Adapter, port)
 
-		// Wait for server to be ready
 		waitForServerReady("http://localhost:"+port+"/status", 5*time.Second)
 
 		return ctx, nil
@@ -90,7 +88,6 @@ func AfterScenarioHook(tc *TestContext) func(ctx context.Context, sc *godog.Scen
 	}
 }
 
-// CombineBeforeHooks combines multiple before hooks into a single hook
 func CombineBeforeHooks(hooks ...func(ctx context.Context, sc *godog.Scenario) (context.Context, error)) func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 	return func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 		var err error
@@ -104,7 +101,6 @@ func CombineBeforeHooks(hooks ...func(ctx context.Context, sc *godog.Scenario) (
 	}
 }
 
-// waitForServerReady polls the server until it's ready or timeout
 func waitForServerReady(url string, timeout time.Duration) {
 	deadline := time.Now().Add(timeout)
 	for time.Now().Before(deadline) {
