@@ -52,7 +52,10 @@ func (c *startServerFeature) theMinecraftProcessShouldBeRunning() error {
 func ClientStartsServer(s *godog.ScenarioContext) {
 	rconAdapter := rcon.NewMinecraftRCONAdapter()
 	rconAdapter.WithTimeout(1 * time.Second)
-	tc := test_infrastructure.NewTestContext(rconAdapter, &process.WindowsOsOperations{}, "notepad.exe")
+	tc := test_infrastructure.NewTestContext(
+		rconAdapter,
+		&process.WindowsOsOperations{},
+		process.NewProcess(&process.WindowsOsOperations{}, "notepad.exe", ""))
 	c := &startServerFeature{testContext: tc}
 
 	// Register hooks with common infrastructure

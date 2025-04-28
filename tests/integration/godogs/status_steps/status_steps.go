@@ -47,7 +47,7 @@ func (c *checkServerFeature) ProcessStatusIsSuccessful() error {
 // What we test:
 // HTTP request check
 func ServerStatusScenarioContext(s *godog.ScenarioContext) {
-	tc := test_infrastructure.NewTestContext(rcon.NewStubRCONAdapter(), &process.WindowsOsOperations{}, "notepad.exe")
+	tc := test_infrastructure.NewTestContext(rcon.NewStubRCONAdapter(), &process.WindowsOsOperations{}, process.NewProcess(&process.WindowsOsOperations{}, "notepad.exe", ""))
 	c := &checkServerFeature{testContext: tc}
 
 	baseHook := test_infrastructure.BeforeScenarioWithNotepadHook(tc, "8080")

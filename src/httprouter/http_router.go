@@ -89,7 +89,8 @@ func (h *ServerRouter) handleStatus(req *http.Request) *http.Response {
 			Status:     "Server is not running",
 		}
 	}
-
+	// do we need to validate this json contract?
+	// TODO: review comment and remove if not needed
 	body, err := json.Marshal(h.handler.Status())
 	if err != nil {
 		return &http.Response{
