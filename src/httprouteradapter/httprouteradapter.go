@@ -11,10 +11,8 @@ type HTTPRouterAdapter struct {
 }
 
 func (a *HTTPRouterAdapter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// Call your existing HandleHTTP method
 	response := a.Router.HandleHTTP(r)
 
-	// Transfer the response to the http.ResponseWriter
 	for key, values := range response.Header {
 		for _, value := range values {
 			w.Header().Add(key, value)
@@ -22,7 +20,6 @@ func (a *HTTPRouterAdapter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(response.StatusCode)
 
-	// If there's a response body, write it
 	if response.Body != nil {
 		io.Copy(w, response.Body)
 		response.Body.Close()

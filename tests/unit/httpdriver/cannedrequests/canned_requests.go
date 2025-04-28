@@ -39,6 +39,16 @@ func NewStatusRequest() *ServerRequest {
 	return &ServerRequest{Request: req}
 }
 
+func NewRunningRequest() *ServerRequest {
+	url, _ := url.Parse("http://localhost/running")
+	req := &http.Request{
+		Method: "GET",
+		URL:    url,
+		Header: make(http.Header),
+	}
+	return &ServerRequest{Request: req}
+}
+
 // ToHTTPRequest extracts the underlying *http.Request
 func (s *ServerRequest) ToHTTPRequest() *http.Request {
 	return s.Request

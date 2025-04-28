@@ -17,7 +17,8 @@ type checkServerFeature struct {
 	resp        *http.Response
 }
 
-const url = constants.BaseURL + "8080" + constants.StatusURL
+const statusRequestURL = constants.BaseURL + "8080" + constants.StatusURL
+const runningURL = constants.BaseURL + "8080" + constants.RunningURL
 
 func ServerStatusScenarioContext(s *godog.ScenarioContext) {
 	tc := test_infrastructure.NewTestContext(rcon.NewStubRCONAdapter(), &process.WindowsOsOperations{}, process.NewProcess(&process.WindowsOsOperations{}, "notepad.exe", ""))
@@ -37,15 +38,23 @@ func ServerStatusScenarioContext(s *godog.ScenarioContext) {
 }
 
 func (c *checkServerFeature) serverIsRunning() error {
-	c.resp, _ = http.Get(url)
-	if c.resp.StatusCode == 200 {
+	resp, err := http.Get(runningURL)
+	if err != nil {
+		return fmt.Errorf("failed to get server running status: %v", err)
+	}
+
+	if resp.StatusCode == 200 {
 		return nil
 	}
-	return fmt.Errorf("server is not running - status code: %d", c.resp.StatusCode)
+	return fmt.Errorf("server is not running - status code: %d", resp.StatusCode)
 }
 
 func (c *checkServerFeature) GetProcessStatus() error {
-	c.resp, _ = http.Get(url)
+	resp, err := http.Get(statusRequestURL)
+	if err != nil {
+		return fmt.Errorf("failed to get server status: %v", err)
+	}
+	c.resp = resp
 	return nil
 }
 

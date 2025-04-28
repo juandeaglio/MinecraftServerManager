@@ -29,9 +29,10 @@ func NewHTTPRouter(controls *controls.Controls, proc process.Process) *ServerRou
 func (h *ServerRouter) HandleHTTP(req *http.Request) *http.Response {
 	// Define route handlers mapping
 	handlers := map[string]func(*http.Request) *http.Response{
-		"/start":  h.handleStart,
-		"/stop":   h.handleStop,
-		"/status": h.handleStatus,
+		"/start":   h.handleStart,
+		"/stop":    h.handleStop,
+		"/status":  h.handleStatus,
+		"/running": h.handleRunning,
 	}
 
 	// Look up the appropriate handler for the requested path
@@ -41,12 +42,11 @@ func (h *ServerRouter) HandleHTTP(req *http.Request) *http.Response {
 
 	// Return 404 Not Found for undefined routes
 	return &http.Response{
-		StatusCode: 404,
-		Status:     "Not Found",
+		StatusCode: 501,
+		Status:     "Not Implemented",
 	}
 }
 
-// handleStart handles server start requests
 func (h *ServerRouter) handleStart(req *http.Request) *http.Response {
 	process := h.handler.Start(h.proc)
 	if process == nil {
@@ -67,7 +67,6 @@ func (h *ServerRouter) handleStart(req *http.Request) *http.Response {
 	}
 }
 
-// handleStop handles server stop requests
 func (h *ServerRouter) handleStop(req *http.Request) *http.Response {
 	if h.handler.Stop() {
 		return &http.Response{
@@ -81,7 +80,6 @@ func (h *ServerRouter) handleStop(req *http.Request) *http.Response {
 	}
 }
 
-// handleStatus handles server status requests
 func (h *ServerRouter) handleStatus(req *http.Request) *http.Response {
 	if h.handler.Status() == nil || h.proc == nil {
 		return &http.Response{
@@ -107,6 +105,19 @@ func (h *ServerRouter) handleStatus(req *http.Request) *http.Response {
 	}
 	resp.Header.Set("Content-Type", "application/json")
 	return resp
+}
+
+func (h *ServerRouter) handleRunning(req *http.Request) *http.Response {
+	if h.proc == nil {
+		return &http.Response{
+			StatusCode: 404,
+			Status:     "Server is not running",
+		}
+	}
+	return &http.Response{
+		StatusCode: 200,
+		Status:     "OK",
+	}
 }
 
 var _ HTTPRouter = (*ServerRouter)(nil)

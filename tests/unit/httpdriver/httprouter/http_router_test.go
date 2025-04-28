@@ -49,3 +49,10 @@ func TestServerStatusWhenServerIsOffline(t *testing.T) {
 	resp := router.HandleHTTP(cannedrequests.NewStatusRequest().ToHTTPRequest())
 	assert.Equalf(t, 404, resp.StatusCode, "Server is offline, but status endpoint returned 200")
 }
+
+func TestServerRunning(t *testing.T) {
+	router := httprouter.NewHTTPRouter(controls.NewControls(rcon.NewStubRCONAdapter()), process.NewProcess(&process.FakeOsOperations{}, "fake", "args"))
+	router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
+	resp := router.HandleHTTP(cannedrequests.NewRunningRequest().ToHTTPRequest())
+	assert.Equalf(t, 200, resp.StatusCode, "Server is running, but running endpoint returned 404")
+}
