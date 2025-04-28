@@ -2,7 +2,6 @@ package start_steps
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -16,6 +15,7 @@ import (
 
 type startServerFeature struct {
 	testContext *test_infrastructure.TestContext
+	resp        *http.Response
 }
 
 const port = "8081"
@@ -54,15 +54,13 @@ func (c *startServerFeature) theMinecraftProcessIsNotRunning() error {
 }
 
 func (c *startServerFeature) aClientRequestsToStartMinecraftProcess() error {
-	resp, _ := http.Get(startURL)
-
-	if resp.StatusCode == 200 {
-		return nil
-	}
-	return fmt.Errorf("failed to start Minecraft process, status code: %v", resp.StatusCode)
+	c.resp, _ = http.Get(startURL)
+	return nil
 }
 
 func (c *startServerFeature) theMinecraftProcessShouldBeRunning() error {
-	log.Println("Step 'the Minecraft process should be running' is not implemented!")
-	return fmt.Errorf("failed to verify Minecraft process is running")
+	if c.resp.StatusCode == 200 {
+		return nil
+	}
+	return fmt.Errorf("failed to start Minecraft process, status code: %v", c.resp.StatusCode)
 }
