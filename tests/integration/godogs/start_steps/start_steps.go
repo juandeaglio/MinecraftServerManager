@@ -54,7 +54,6 @@ func (c *startServerFeature) aClientRequestsToStartMinecraftProcess() error {
 }
 
 func (c *startServerFeature) theMinecraftProcessShouldBeRunning() error {
-	return godog.ErrPending
 	log.Println("Step 'the Minecraft process should be running' is not implemented!")
 	return fmt.Errorf("failed to verify Minecraft process is running")
 }
