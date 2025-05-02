@@ -72,17 +72,10 @@ func AfterScenarioHook(tc *TestContext) func(ctx context.Context, sc *godog.Scen
 			log.Printf("Scenario %s failed due to: %s", sc.Name, err.Error())
 		}
 
+		tc.Controls.Stop()
+
 		if tc.Server != nil {
 			tc.Server.Close()
-		}
-
-		if tc.Process != nil {
-			log.Printf("Explicitly stopping process")
-			tc.Process.Stop()
-		}
-
-		if tc.Controls != nil {
-			tc.Controls.Stop()
 		}
 
 		return ctx, nil
