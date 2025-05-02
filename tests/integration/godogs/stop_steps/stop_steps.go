@@ -17,25 +17,6 @@ type checkServerFeature struct {
 	resp        *http.Response
 }
 
-const statusURL = constants.BaseURL + "8082" + constants.StatusURL
-const stopURL = constants.BaseURL + "8082" + constants.StopURL
-
-// func ServerStatusScenarioContext(s *godog.ScenarioContext) {
-// 	tc := test_infrastructure.NewTestContext(rcon.NewStubRCONAdapter(), &process.WindowsOsOperations{}, process.NewProcess(&process.WindowsOsOperations{}, "notepad.exe", ""))
-// 	c := &checkServerFeature{testContext: tc}
-
-// 	baseHook := test_infrastructure.BeforeScenarioWithNotepadHook(tc, "8080")
-// 	customHook := func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-// 		tc.Process = tc.Controls.Start(process.NewProcess(&process.WindowsOsOperations{}, "notepad.exe"))
-// 		return ctx, nil
-// 	}
-// 	s.Before(test_infrastructure.CombineBeforeHooks(baseHook, customHook))
-// 	s.After(test_infrastructure.AfterScenarioHook(tc))
-
-//		s.Given(`^the Minecraft server is running and ready$`, c.serverIsRunning)
-//		s.When(`^a client requests the server status$`, c.GetProcessStatus)
-//		s.Then(`^the system returns a status response$`, c.ProcessStatusIsSuccessful)
-//	}
 func ClientStopsServer(s *godog.ScenarioContext) {
 	tc := test_infrastructure.NewTestContext(rcon.NewStubRCONAdapter(), &process.WindowsOsOperations{}, process.NewProcess(&process.WindowsOsOperations{}, "notepad.exe", ""))
 	c := &checkServerFeature{testContext: tc}
@@ -58,9 +39,17 @@ func (c *checkServerFeature) serverIsRunning() error {
 }
 
 func (c *checkServerFeature) clientSendsStopRequest() error {
-	return fmt.Errorf("not implemented")
+	resp, err := http.Get(constants.BaseURL + "8082" + constants.StopURL)
+	if err != nil {
+		return fmt.Errorf("failed to send stop request: %v", err)
+	}
+	c.resp = resp
+	return nil
 }
 
 func (c *checkServerFeature) serverProcessTerminates() error {
-	return godog.ErrPending
+	if c.resp.StatusCode == 200 {
+		return nil
+	}
+	return fmt.Errorf("server did not stop - status code: %d", c.resp.StatusCode)
 }
