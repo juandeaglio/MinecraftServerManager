@@ -28,8 +28,10 @@ func TestFailtoStartServer(t *testing.T) {
 func TestStopServer(t *testing.T) {
 	router := httprouter.NewHTTPRouter(controls.NewControls(nil), process.NewProcess(&process.FakeOsOperations{}, "fake", "args"))
 	router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
-	resp := router.HandleHTTP(cannedrequests.NewStopRequest().ToHTTPRequest())
-	assert.Equalf(t, 200, resp.StatusCode, "Server did not stop successfully, maybe it did not start?")
+	router.HandleHTTP(cannedrequests.NewStopRequest().ToHTTPRequest())
+	resp := router.HandleHTTP(cannedrequests.NewRunningRequest().ToHTTPRequest())
+
+	assert.Equalf(t, 404, resp.StatusCode, "Server did not stop successfully, maybe it did not stop?")
 }
 
 func TestServerStatus(t *testing.T) {

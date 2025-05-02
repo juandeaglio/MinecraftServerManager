@@ -53,6 +53,7 @@ func isPIDValid(pid int) bool {
 func (m *Controls) Stop() bool {
 	if m.started {
 		m.started = !m.started
+		m.serverInBackground.Stop()
 		return !m.started
 	}
 	return false

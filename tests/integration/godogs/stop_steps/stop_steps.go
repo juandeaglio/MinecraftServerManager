@@ -38,7 +38,8 @@ func (c *checkServerFeature) serverIsRunning() error {
 }
 
 func (c *checkServerFeature) clientSendsStopRequest() error {
-	resp, err := http.Get(constants.BaseURL + "8082" + constants.StopURL)
+	http.Get(constants.BaseURL + "8082" + constants.StopURL)
+	resp, err := http.Get(constants.BaseURL + "8082" + constants.RunningURL)
 	if err != nil {
 		return fmt.Errorf("failed to send stop request: %v", err)
 	}
@@ -47,7 +48,7 @@ func (c *checkServerFeature) clientSendsStopRequest() error {
 }
 
 func (c *checkServerFeature) serverProcessTerminates() error {
-	if c.resp.StatusCode == 200 {
+	if c.resp.StatusCode == 404 {
 		return nil
 	}
 	return fmt.Errorf("server did not stop - status code: %d", c.resp.StatusCode)

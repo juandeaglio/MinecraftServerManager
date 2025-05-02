@@ -79,10 +79,15 @@ func NewProcess(osOps OsOperations, program string, args ...string) *ProcessImpl
 	}
 }
 
-type FakeOsOperations struct{}
+type FakeOsOperations struct {
+	pid int
+}
 
 func (f *FakeOsOperations) FindProcess(pid int) (*os.Process, error) {
-	return nil, nil
+	if f.pid <= 0 {
+		return nil, fmt.Errorf("process not found")
+	}
+	return &os.Process{Pid: f.pid}, nil
 }
 
 func (f *FakeOsOperations) Signal(process *os.Process, signal syscall.Signal) error {
@@ -91,7 +96,8 @@ func (f *FakeOsOperations) Signal(process *os.Process, signal syscall.Signal) er
 
 func (f *FakeOsOperations) CreateCommand(program string, args ...string) *exec.Cmd {
 	cmd := exec.Command(program, args...)
-	cmd.Process = &os.Process{Pid: 12345} // Fake PID
+	f.pid = 12345
+	cmd.Process = &os.Process{Pid: f.pid} // Fake PID
 	return cmd
 }
 
@@ -103,5 +109,7 @@ func (f *FakeOsOperations) StartCmd(cmd *exec.Cmd) error {
 }
 
 func (f *FakeOsOperations) KillProcess(process *os.Process) error {
+	process.Pid = 0
+	f.pid = 0
 	return nil
 }
