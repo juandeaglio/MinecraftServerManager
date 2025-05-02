@@ -11,6 +11,6 @@ Feature: Control the minecraft server
     Then the server starts
     
   Scenario: Client stops the server
-    Given the Minecraft server is started
+    Given a Minecraft server is running
     When a client stops the server
     Then the server stops

@@ -3,6 +3,7 @@ package test_runner
 import (
 	"minecraftremote/tests/integration/godogs/start_steps"
 	"minecraftremote/tests/integration/godogs/status_steps"
+	"minecraftremote/tests/integration/godogs/stop_steps"
 	"testing"
 
 	"github.com/cucumber/godog"
@@ -22,6 +23,13 @@ func TestServerStartScenarios(t *testing.T) {
 	}
 }
 
+func TestServerStopScenarios(t *testing.T) {
+	suite := runScenario(t, stop_steps.ClientStopsServer, "features/control_server.feature:13")
+	if status := suite.Run(); status != 0 {
+		t.Fatalf("Server stop feature tests failed with status: %d", status)
+	}
+}
+
 func runScenario(t *testing.T, scenarioFeature ScenarioContextFunc, featurePath string) godog.TestSuite {
 	return godog.TestSuite{
 		ScenarioInitializer: func(s *godog.ScenarioContext) {
@@ -31,7 +39,7 @@ func runScenario(t *testing.T, scenarioFeature ScenarioContextFunc, featurePath 
 			Format:   "pretty",
 			Paths:    []string{featurePath},
 			TestingT: t,
-			Strict:   false,
+			Strict:   true,
 			NoColors: false,   // Ensure colors are enabled for clarity
 			Tags:     "~@wip", // Exclude work-in-progress tests
 		},

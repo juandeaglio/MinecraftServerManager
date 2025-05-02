@@ -12,7 +12,7 @@ import (
 	"github.com/cucumber/godog"
 )
 
-type checkServerFeature struct {
+type StatusServerFeature struct {
 	testContext *test_infrastructure.TestContext
 	resp        *http.Response
 }
@@ -22,7 +22,7 @@ const runningURL = constants.BaseURL + "8080" + constants.RunningURL
 
 func ServerStatusScenarioContext(s *godog.ScenarioContext) {
 	tc := test_infrastructure.NewTestContext(rcon.NewStubRCONAdapter(), &process.WindowsOsOperations{}, process.NewProcess(&process.WindowsOsOperations{}, "notepad.exe", ""))
-	c := &checkServerFeature{testContext: tc}
+	c := &StatusServerFeature{testContext: tc}
 
 	baseHook := test_infrastructure.BeforeScenarioWithNotepadHook(tc, "8080")
 	customHook := func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
@@ -32,24 +32,18 @@ func ServerStatusScenarioContext(s *godog.ScenarioContext) {
 	s.Before(test_infrastructure.CombineBeforeHooks(baseHook, customHook))
 	s.After(test_infrastructure.AfterScenarioHook(tc))
 
-	s.Given(`^the Minecraft server is running and ready$`, c.serverIsRunning)
+	s.Given(`^the Minecraft server is running and ready$`, c.ServerIsRunning)
 	s.When(`^a client requests the server status$`, c.GetProcessStatus)
 	s.Then(`^the system returns a status response$`, c.ProcessStatusIsSuccessful)
 }
 
-func (c *checkServerFeature) serverIsRunning() error {
-	resp, err := http.Get(runningURL)
-	if err != nil {
-		return fmt.Errorf("failed to get server running status: %v", err)
-	}
+// CheckServerRunning checks if the server is running at the specified port
 
-	if resp.StatusCode == 200 {
-		return nil
-	}
-	return fmt.Errorf("server is not running - status code: %d", resp.StatusCode)
+func (c *StatusServerFeature) ServerIsRunning() error {
+	return test_infrastructure.CheckServerRunning("8080")
 }
 
-func (c *checkServerFeature) GetProcessStatus() error {
+func (c *StatusServerFeature) GetProcessStatus() error {
 	resp, err := http.Get(statusRequestURL)
 	if err != nil {
 		return fmt.Errorf("failed to get server status: %v", err)
@@ -58,7 +52,7 @@ func (c *checkServerFeature) GetProcessStatus() error {
 	return nil
 }
 
-func (c *checkServerFeature) ProcessStatusIsSuccessful() error {
+func (c *StatusServerFeature) ProcessStatusIsSuccessful() error {
 	if c.resp.StatusCode == 200 {
 		return nil
 	}

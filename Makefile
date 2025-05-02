@@ -1,5 +1,5 @@
 integration-test:
-	go test .\tests\integration\godogs\...
+	go test .\tests\integration\godogs\... -v
 
 unit-test:
 	go test -v $(if $(dir),./tests/unit/$(dir),./tests/unit/...)

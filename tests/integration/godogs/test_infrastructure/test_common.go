@@ -1,10 +1,12 @@
 package test_infrastructure
 
 import (
+	"fmt"
 	"log"
 	"minecraftremote/src/controls"
 	"minecraftremote/src/httprouteradapter"
 	"minecraftremote/src/process"
+	"minecraftremote/tests/integration/godogs/constants"
 	"net/http"
 	"time"
 )
@@ -33,4 +35,16 @@ func startServerWithRouter(adapter *httprouteradapter.HTTPRouterAdapter, port st
 	}()
 
 	return server
+}
+
+func CheckServerRunning(port string) error {
+	checkURL := constants.BaseURL + port + constants.RunningURL
+	resp, err := http.Get(checkURL)
+	if err != nil {
+		return fmt.Errorf("failed to get server running status: %v", err)
+	}
+	if resp.StatusCode == 200 {
+		return nil
+	}
+	return fmt.Errorf("server is not running - status code: %d", resp.StatusCode)
 }
