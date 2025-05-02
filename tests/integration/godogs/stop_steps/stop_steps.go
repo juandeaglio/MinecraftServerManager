@@ -17,7 +17,11 @@ type checkServerFeature struct {
 }
 
 func ClientStopsServer(s *godog.ScenarioContext) {
-	tc := test_infrastructure.NewTestContext(rcon.NewStubRCONAdapter(), &process.WindowsOsOperations{}, process.NewProcess(&process.WindowsOsOperations{}, "notepad.exe", ""))
+	osOps := &process.WindowsOsOperations{}
+	tc := test_infrastructure.NewTestContext(
+		rcon.NewStubRCONAdapter(),
+		process.NewProcess(osOps, "notepad.exe", ""),
+	)
 	c := &checkServerFeature{testContext: tc}
 
 	baseHook := test_infrastructure.BeforeScenarioWithNotepadHook(tc, "8082")

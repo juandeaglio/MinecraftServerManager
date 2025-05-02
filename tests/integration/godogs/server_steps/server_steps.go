@@ -7,7 +7,6 @@ import (
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
 	"minecraftremote/tests/unit/httpdriver/cannedrequests"
 	"net/http"
-	"time"
 
 	"github.com/cucumber/godog"
 )
@@ -18,26 +17,21 @@ type startServerFeature struct {
 
 func StartServer(s *godog.ScenarioContext) {
 	c := &startServerFeature{}
-
+	osOps := &process.WindowsOsOperations{}
+	c.testContext = test_infrastructure.NewTestContext(
+		rcon.NewStubRCONAdapter(),
+		process.NewProcess(osOps, "notepad.exe", ""),
+	)
+	s.Before(test_infrastructure.BeforeScenarioHook(c.testContext, "8083"))
 	// Register step definitions
 	s.Given(`^a process is not running$`, c.processIsNotRunning)
 	s.When(`^the process starts$`, c.processStarts)
 	s.Then(`^the process should be running$`, c.processIsRunning)
 
+	s.After(test_infrastructure.AfterScenarioHook(c.testContext))
 }
 
 func (c *startServerFeature) processIsNotRunning() error {
-	osOps := &process.WindowsOsOperations{}
-	c.testContext = test_infrastructure.NewTestContext(
-		rcon.NewStubRCONAdapter(),
-		osOps,
-		process.NewProcess(osOps, "notepad.exe", ""),
-	)
-
-	test_infrastructure.StartServerWithRouter(c.testContext.Adapter, "8083")
-
-	test_infrastructure.WaitForServerReady("http://localhost:8083/running", 1*time.Second)
-
 	resp, err := http.Get("http://localhost:8083/running")
 	if err != nil {
 		return fmt.Errorf("failed to get server running status: %v", err)

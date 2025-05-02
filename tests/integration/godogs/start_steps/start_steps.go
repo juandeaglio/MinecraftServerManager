@@ -28,14 +28,13 @@ func ClientStartsServer(s *godog.ScenarioContext) {
 	osOps := &process.WindowsOsOperations{}
 	tc := test_infrastructure.NewTestContext(
 		rconAdapter,
-		osOps,
 		process.NewProcess(osOps, "notepad.exe", ""))
 
 	c := &startServerFeature{testContext: tc}
 
 	// Register hooks with common infrastructure
-	s.Before(test_infrastructure.BeforeScenarioHook(tc, port))
-	s.After(test_infrastructure.AfterScenarioHook(tc))
+	s.Before(test_infrastructure.BeforeScenarioHook(c.testContext, port))
+	s.After(test_infrastructure.AfterScenarioHook(c.testContext))
 
 	// Register step definitions
 	s.Given(`^the Minecraft server isn't started$`, c.theMinecraftProcessIsNotRunning)

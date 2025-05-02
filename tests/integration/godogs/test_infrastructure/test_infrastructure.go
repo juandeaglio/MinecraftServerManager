@@ -25,7 +25,7 @@ type TestContext struct {
 }
 
 // NewTestContext creates a new test context with initialized dependencies
-func NewTestContext(rconAdapter rcon.RCONAdapter, osOperations process.OsOperations, process process.Process) *TestContext {
+func NewTestContext(rconAdapter rcon.RCONAdapter, process process.Process) *TestContext {
 	if rconAdapter == nil {
 		rconAdapter = rcon.NewMinecraftRCONAdapter()
 	}

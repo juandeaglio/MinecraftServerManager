@@ -21,7 +21,11 @@ const statusRequestURL = constants.BaseURL + "8080" + constants.StatusURL
 const runningURL = constants.BaseURL + "8080" + constants.RunningURL
 
 func ServerStatusScenarioContext(s *godog.ScenarioContext) {
-	tc := test_infrastructure.NewTestContext(rcon.NewStubRCONAdapter(), &process.WindowsOsOperations{}, process.NewProcess(&process.WindowsOsOperations{}, "notepad.exe", ""))
+	osOps := &process.WindowsOsOperations{}
+	tc := test_infrastructure.NewTestContext(
+		rcon.NewStubRCONAdapter(),
+		process.NewProcess(osOps, "notepad.exe", ""),
+	)
 	c := &StatusServerFeature{testContext: tc}
 
 	baseHook := test_infrastructure.BeforeScenarioWithNotepadHook(tc, "8080")
