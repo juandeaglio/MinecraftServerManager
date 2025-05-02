@@ -2,6 +2,7 @@ package test_infrastructure
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"minecraftremote/src/controls"
 	"minecraftremote/src/httprouter"
@@ -44,9 +45,8 @@ func NewTestContext(rconAdapter rcon.RCONAdapter, osOperations process.OsOperati
 func BeforeScenarioHook(tc *TestContext, port string) func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 	return func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 		log.Printf("Running scenario: %s", sc.Name)
-		tc.Server = startServerWithRouter(tc.Adapter, port)
-
-		waitForServerReady("http://localhost:"+port+"/status", 5*time.Second)
+		tc.Server = StartServerWithRouter(tc.Adapter, port)
+		WaitForServerReady("http://localhost:"+port+"/running", 5*time.Second)
 
 		return ctx, nil
 	}
@@ -56,9 +56,10 @@ func BeforeScenarioHook(tc *TestContext, port string) func(ctx context.Context, 
 func BeforeScenarioWithNotepadHook(tc *TestContext, port string) func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 	return func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 		log.Printf("Running scenario: %s", sc.Name)
-		tc.Server = startServerWithRouter(tc.Adapter, port)
-
-		waitForServerReady("http://localhost:"+port+"/status", 5*time.Second)
+		tc.Server = StartServerWithRouter(tc.Adapter, port)
+		http.Get("http://localhost:" + port + "/start")
+		fmt.Println("Sent start request to server")
+		WaitForServerReady("http://localhost:"+port+"/running", 5*time.Second)
 
 		return ctx, nil
 	}
@@ -101,7 +102,7 @@ func CombineBeforeHooks(hooks ...func(ctx context.Context, sc *godog.Scenario) (
 	}
 }
 
-func waitForServerReady(url string, timeout time.Duration) {
+func WaitForServerReady(url string, timeout time.Duration) {
 	deadline := time.Now().Add(timeout)
 	for time.Now().Before(deadline) {
 		resp, err := http.Get(url)

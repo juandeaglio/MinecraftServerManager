@@ -108,7 +108,7 @@ func (h *ServerRouter) handleStatus(req *http.Request) *http.Response {
 }
 
 func (h *ServerRouter) handleRunning(req *http.Request) *http.Response {
-	if h.proc == nil {
+	if h.proc.PID() == -1 {
 		return &http.Response{
 			StatusCode: 404,
 			Status:     "Server is not running",

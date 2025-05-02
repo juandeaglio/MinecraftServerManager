@@ -56,3 +56,9 @@ func TestServerRunning(t *testing.T) {
 	resp := router.HandleHTTP(cannedrequests.NewRunningRequest().ToHTTPRequest())
 	assert.Equalf(t, 200, resp.StatusCode, "Server is running, but running endpoint returned 404")
 }
+
+func TestServerNotRunning(t *testing.T) {
+	router := httprouter.NewHTTPRouter(controls.NewControls(rcon.NewStubRCONAdapter()), process.NewProcess(&process.FakeOsOperations{}, "fake", "args"))
+	resp := router.HandleHTTP(cannedrequests.NewRunningRequest().ToHTTPRequest())
+	assert.Equalf(t, 404, resp.StatusCode, "Server is not running, but running endpoint returned 200")
+}

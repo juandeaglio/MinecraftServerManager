@@ -18,7 +18,7 @@ type TestState struct {
 	Process  process.Process
 }
 
-func startServerWithRouter(adapter *httprouteradapter.HTTPRouterAdapter, port string) *http.Server {
+func StartServerWithRouter(adapter *httprouteradapter.HTTPRouterAdapter, port string) *http.Server {
 	server := &http.Server{
 		Addr:         ":" + port,
 		Handler:      adapter, // Use your router's HandleHTTP as the handler

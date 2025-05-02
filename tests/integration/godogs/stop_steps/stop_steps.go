@@ -1,7 +1,6 @@
 package stop_steps
 
 import (
-	"context"
 	"fmt"
 	"minecraftremote/src/process"
 	"minecraftremote/src/rcon"
@@ -22,11 +21,7 @@ func ClientStopsServer(s *godog.ScenarioContext) {
 	c := &checkServerFeature{testContext: tc}
 
 	baseHook := test_infrastructure.BeforeScenarioWithNotepadHook(tc, "8082")
-	customHook := func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-		tc.Process = tc.Controls.Start(process.NewProcess(&process.WindowsOsOperations{}, "notepad.exe", ""))
-		return ctx, nil
-	}
-	s.Before(test_infrastructure.CombineBeforeHooks(baseHook, customHook))
+	s.Before(baseHook)
 	s.After(test_infrastructure.AfterScenarioHook(tc))
 
 	s.Given(`^a Minecraft server is running$`, c.serverIsRunning)

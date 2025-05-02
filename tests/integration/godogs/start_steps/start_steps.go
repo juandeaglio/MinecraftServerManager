@@ -19,16 +19,18 @@ type startServerFeature struct {
 }
 
 const port = "8081"
-const getStatusURL = constants.BaseURL + port + constants.StatusURL
+const getRunningURL = constants.BaseURL + port + constants.RunningURL
 const startURL = constants.BaseURL + port + constants.StartURL
 
 func ClientStartsServer(s *godog.ScenarioContext) {
 	rconAdapter := rcon.NewMinecraftRCONAdapter()
 	rconAdapter.WithTimeout(1 * time.Second)
+	osOps := &process.WindowsOsOperations{}
 	tc := test_infrastructure.NewTestContext(
 		rconAdapter,
-		&process.WindowsOsOperations{},
-		process.NewProcess(&process.WindowsOsOperations{}, "notepad.exe", ""))
+		osOps,
+		process.NewProcess(osOps, "notepad.exe", ""))
+
 	c := &startServerFeature{testContext: tc}
 
 	// Register hooks with common infrastructure
@@ -43,13 +45,10 @@ func ClientStartsServer(s *godog.ScenarioContext) {
 
 func (c *startServerFeature) theMinecraftProcessIsNotRunning() error {
 	// Check status endpoint of our HTTP API server
-	resp, _ := http.Get(getStatusURL)
-
-	// Check if the response code indicates server not running (4xx or 5xx status)
-	if resp.StatusCode != 404 {
+	resp, _ := http.Get(getRunningURL)
+	if resp.StatusCode == 200 {
 		return fmt.Errorf("minecraft process should be stopped, but status endpoint reports a successful status but instead reports %v", resp.StatusCode)
 	}
-
 	return nil
 }
 

@@ -1,6 +1,7 @@
 package test_runner
 
 import (
+	"minecraftremote/tests/integration/godogs/server_steps"
 	"minecraftremote/tests/integration/godogs/start_steps"
 	"minecraftremote/tests/integration/godogs/status_steps"
 	"minecraftremote/tests/integration/godogs/stop_steps"
@@ -27,6 +28,13 @@ func TestServerStopScenarios(t *testing.T) {
 	suite := runScenario(t, stop_steps.ClientStopsServer, "features/control_server.feature:13")
 	if status := suite.Run(); status != 0 {
 		t.Fatalf("Server stop feature tests failed with status: %d", status)
+	}
+}
+
+func TestStartServer(t *testing.T) {
+	suite := runScenario(t, server_steps.StartServer, "features/server.feature:3")
+	if status := suite.Run(); status != 0 {
+		t.Fatalf("Server start feature tests failed with status: %d", status)
 	}
 }
 
