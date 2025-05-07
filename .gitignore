@@ -1,0 +1,6 @@
+.coverignore
+coverage
+coverage.html
+coverage.out
+integration.coverage.out
+unit.coverage.out

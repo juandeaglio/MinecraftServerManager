@@ -3,6 +3,7 @@ package controls
 import (
 	"minecraftremote/src/process"
 	"minecraftremote/src/rcon"
+	"time"
 )
 
 type Controls struct {
@@ -52,9 +53,21 @@ func isPIDValid(pid int) bool {
 
 func (m *Controls) Stop() bool {
 	if m.started {
-		m.started = !m.started
-		m.serverInBackground.Stop()
-		return !m.started
+		err := m.serverInBackground.Stop()
+		if err != nil {
+			return false
+		}
+
+		// Give a small window for the process to die
+		time.Sleep(100 * time.Millisecond)
+
+		// Verify process is actually stopped
+		if m.serverInBackground.Started() {
+			return false
+		}
+
+		m.started = false
+		return true
 	}
 	return false
 }

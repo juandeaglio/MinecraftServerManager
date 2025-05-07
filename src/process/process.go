@@ -2,7 +2,7 @@ package process
 
 import (
 	"fmt"
-	"os"
+
 	"os/exec"
 	"syscall"
 )
@@ -65,6 +65,12 @@ func (p *ProcessImpl) Stop() error {
 		if err != nil {
 			return fmt.Errorf("failed to kill process %s (PID: %d): %w", p.program, pid, err)
 		}
+
+		// Verify the process is actually dead
+		if p.isProcessRunning(pid) {
+			return fmt.Errorf("process %s (PID: %d) is still running after kill attempt", p.program, pid)
+		}
+
 		p.cmd = nil
 		return nil
 	}
@@ -77,39 +83,4 @@ func NewProcess(osOps OsOperations, program string, args ...string) *ProcessImpl
 		args:    args,
 		osOps:   osOps,
 	}
-}
-
-type FakeOsOperations struct {
-	pid int
-}
-
-func (f *FakeOsOperations) FindProcess(pid int) (*os.Process, error) {
-	if f.pid <= 0 {
-		return nil, fmt.Errorf("process not found")
-	}
-	return &os.Process{Pid: f.pid}, nil
-}
-
-func (f *FakeOsOperations) Signal(process *os.Process, signal syscall.Signal) error {
-	return nil
-}
-
-func (f *FakeOsOperations) CreateCommand(program string, args ...string) *exec.Cmd {
-	cmd := exec.Command(program, args...)
-	f.pid = 12345
-	cmd.Process = &os.Process{Pid: f.pid} // Fake PID
-	return cmd
-}
-
-func (f *FakeOsOperations) SetSysProcAttr(cmd *exec.Cmd) {
-}
-
-func (f *FakeOsOperations) StartCmd(cmd *exec.Cmd) error {
-	return nil
-}
-
-func (f *FakeOsOperations) KillProcess(process *os.Process) error {
-	process.Pid = 0
-	f.pid = 0
-	return nil
 }
