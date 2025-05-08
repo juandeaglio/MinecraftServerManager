@@ -29,10 +29,6 @@ func (m *Controls) Status() *rcon.Status {
 	return m.rcon.GetStatus()
 }
 
-func (m *Controls) getPlayers() int {
-	return 0
-}
-
 func (m *Controls) Start(minecraftServer process.Process) process.Process {
 	m.serverInBackground = minecraftServer
 
