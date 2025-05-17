@@ -2,7 +2,7 @@ package server_steps
 
 import (
 	"fmt"
-	"minecraftremote/src/process"
+	"minecraftremote/src/process_context"
 	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
 	"minecraftremote/tests/unit/httpdriver/cannedrequests"
@@ -17,16 +17,16 @@ type startServerFeature struct {
 
 func StartServer(s *godog.ScenarioContext) {
 	c := &startServerFeature{}
-	osOps := &process.WindowsOsOperations{}
+	osOps := &process_context.WindowsOsOperations{}
 	c.testContext = test_infrastructure.NewTestContext(
 		rcon.NewStubRCONAdapter(),
-		process.NewProcess(osOps, "notepad.exe", ""),
+		process_context.NewProcessInvoker(osOps, "notepad.exe", ""),
 	)
 	s.Before(test_infrastructure.BeforeScenarioHook(c.testContext, "8083"))
 	// Register step definitions
-	s.Given(`^a process is not running$`, c.processIsNotRunning)
-	s.When(`^the process starts$`, c.processStarts)
-	s.Then(`^the process should be running$`, c.processIsRunning)
+	s.Given(`^the server does not have a process$`, c.processIsNotRunning)
+	s.When(`^the server starts a process$`, c.processStarts)
+	s.Then(`^the server process should be running$`, c.processIsRunning)
 
 	s.After(test_infrastructure.AfterScenarioHook(c.testContext))
 }

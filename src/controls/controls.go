@@ -1,13 +1,13 @@
 package controls
 
 import (
-	"minecraftremote/src/process"
+	"minecraftremote/src/process_context"
 	"minecraftremote/src/rcon"
 	"time"
 )
 
 type Controls struct {
-	serverInBackground process.Process
+	serverInBackground process_context.Process
 	started            bool
 	rcon               rcon.RCONAdapter
 }
@@ -29,7 +29,7 @@ func (m *Controls) Status() *rcon.Status {
 	return m.rcon.GetStatus()
 }
 
-func (m *Controls) Start(minecraftServer process.Process) process.Process {
+func (m *Controls) Start(minecraftServer process_context.Process) process_context.Process {
 	m.serverInBackground = minecraftServer
 
 	err := minecraftServer.Start()
@@ -68,7 +68,7 @@ func (m *Controls) Stop() bool {
 	return false
 }
 
-func NewControls(rcon rcon.RCONAdapter, process ...process.Process) *Controls {
+func NewControls(rcon rcon.RCONAdapter, process ...process_context.Process) *Controls {
 	controls := &Controls{}
 	if len(process) > 0 {
 		controls.serverInBackground = process[0]

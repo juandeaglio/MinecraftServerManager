@@ -4,7 +4,7 @@ import (
 	"minecraftremote/src/controls"
 	"minecraftremote/src/httprouter"
 	"minecraftremote/src/httprouteradapter"
-	"minecraftremote/src/process"
+	"minecraftremote/src/process_context"
 	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
 	"os"
@@ -13,10 +13,10 @@ import (
 )
 
 func main() {
-	osOps := &process.WindowsOsOperations{}
-	process := process.NewProcess(osOps, "notepad.exe", "")
-	controls := controls.NewControls(rcon.NewStubRCONAdapter(), process)
-	router := httprouter.NewHTTPRouter(controls, process)
+	osOps := &process_context.WindowsOsOperations{}
+	newProcess := process_context.NewProcessInvoker(osOps, "notepad.exe", "")
+	mcControls := controls.NewControls(rcon.NewStubRCONAdapter(), newProcess)
+	router := httprouter.NewHTTPRouter(mcControls, newProcess)
 	adapter := &httprouteradapter.HTTPRouterAdapter{Router: router}
 
 	server := test_infrastructure.StartServerWithRouter(adapter, "8080")
@@ -28,9 +28,15 @@ func main() {
 
 	// Cleanup
 	if server != nil {
-		server.Close()
+		err := server.Close()
+		if err != nil {
+			return
+		}
 	}
-	if process != nil {
-		process.Stop()
+	if newProcess != nil {
+		err := newProcess.Stop()
+		if err != nil {
+			return
+		}
 	}
 }

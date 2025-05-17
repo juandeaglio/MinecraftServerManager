@@ -1,11 +1,11 @@
-package start_steps
+package control_server_steps
 
 import (
 	"fmt"
 	"net/http"
 	"time"
 
-	"minecraftremote/src/process"
+	"minecraftremote/src/process_context"
 	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/constants"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
@@ -25,10 +25,10 @@ const startURL = constants.BaseURL + port + constants.StartURL
 func ClientStartsServer(s *godog.ScenarioContext) {
 	rconAdapter := rcon.NewMinecraftRCONAdapter()
 	rconAdapter.WithTimeout(1 * time.Second)
-	osOps := &process.WindowsOsOperations{}
+	osOps := &process_context.WindowsOsOperations{}
 	tc := test_infrastructure.NewTestContext(
 		rconAdapter,
-		process.NewProcess(osOps, "notepad.exe", ""))
+		process_context.NewProcessInvoker(osOps, "notepad.exe", ""))
 
 	c := &startServerFeature{testContext: tc}
 

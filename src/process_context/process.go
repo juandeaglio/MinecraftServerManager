@@ -1,4 +1,4 @@
-package process
+package process_context
 
 import (
 	"fmt"
@@ -77,7 +77,7 @@ func (p *ProcessImpl) Stop() error {
 	return nil
 }
 
-func NewProcess(osOps OsOperations, program string, args ...string) *ProcessImpl {
+func NewProcessInvoker(osOps OsOperations, program string, args ...string) *ProcessImpl {
 	return &ProcessImpl{
 		program: program,
 		args:    args,

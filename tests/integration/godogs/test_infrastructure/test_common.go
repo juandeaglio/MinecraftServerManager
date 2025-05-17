@@ -5,7 +5,7 @@ import (
 	"log"
 	"minecraftremote/src/controls"
 	"minecraftremote/src/httprouteradapter"
-	"minecraftremote/src/process"
+	"minecraftremote/src/process_context"
 	"minecraftremote/tests/integration/godogs/constants"
 	"net/http"
 	"time"
@@ -15,7 +15,7 @@ import (
 type TestState struct {
 	Controls controls.Controls
 	Server   http.Server
-	Process  process.Process
+	Process  process_context.Process
 }
 
 func StartServerWithRouter(adapter *httprouteradapter.HTTPRouterAdapter, port string) *http.Server {

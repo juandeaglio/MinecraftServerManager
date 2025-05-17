@@ -1,40 +1,46 @@
 package test_runner
 
 import (
+	"minecraftremote/tests/integration/godogs/control_steps"
+	"minecraftremote/tests/integration/godogs/process_steps"
 	"minecraftremote/tests/integration/godogs/server_steps"
-	"minecraftremote/tests/integration/godogs/start_steps"
-	"minecraftremote/tests/integration/godogs/status_steps"
-	"minecraftremote/tests/integration/godogs/stop_steps"
 	"testing"
 
 	"github.com/cucumber/godog"
 )
 
 func TestServerStatusScenarios(t *testing.T) {
-	suite := runScenario(t, status_steps.ServerStatusScenarioContext, "features/control_server.feature:3")
+	suite := runScenario(t, control_server_steps.ServerStatusScenarioContext, "control_steps/control_server.feature:3")
 	if status := suite.Run(); status != 0 {
 		t.Fatalf("Server status feature tests failed with status: %d", status)
 	}
 }
 
 func TestServerStartScenarios(t *testing.T) {
-	suite := runScenario(t, start_steps.ClientStartsServer, "features/control_server.feature:8")
+	suite := runScenario(t, control_server_steps.ClientStartsServer, "control_steps/control_server.feature:8")
 	if status := suite.Run(); status != 0 {
 		t.Fatalf("Server start feature tests failed with status: %d", status)
 	}
 }
 
 func TestServerStopScenarios(t *testing.T) {
-	suite := runScenario(t, stop_steps.ClientStopsServer, "features/control_server.feature:13")
+	suite := runScenario(t, control_server_steps.ClientStopsServer, "control_steps/control_server.feature:13")
 	if status := suite.Run(); status != 0 {
 		t.Fatalf("Server stop feature tests failed with status: %d", status)
 	}
 }
 
 func TestStartServer(t *testing.T) {
-	suite := runScenario(t, server_steps.StartServer, "features/server.feature:3")
+	suite := runScenario(t, server_steps.StartServer, "server_steps/server.feature:3")
 	if status := suite.Run(); status != 0 {
 		t.Fatalf("Server start feature tests failed with status: %d", status)
+	}
+}
+
+func TestWindowsOps(t *testing.T) {
+	suite := runScenario(t, process_steps.StartProcess, "process_steps/windows_ops.feature:3")
+	if status := suite.Run(); status != 0 {
+		t.Fatalf("ProcessContext start test failed with status: %d", status)
 	}
 }
 

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"minecraftremote/src/controls"
-	"minecraftremote/src/process"
+	"minecraftremote/src/process_context"
 	"net/http"
 )
 
@@ -17,11 +17,11 @@ type HTTPRouter interface {
 }
 
 type ServerRouter struct {
-	proc    process.Process
+	proc    process_context.Process
 	handler *controls.Controls
 }
 
-func NewHTTPRouter(controls *controls.Controls, proc process.Process) *ServerRouter {
+func NewHTTPRouter(controls *controls.Controls, proc process_context.Process) *ServerRouter {
 	return &ServerRouter{handler: controls, proc: proc}
 }
 
