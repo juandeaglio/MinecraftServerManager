@@ -28,6 +28,9 @@ func StartProcess(s *godog.ScenarioContext) {
 }
 
 func (c *startProcessFeature) processIsNotRunning() error {
+	// pid := c.testContext.ProcessContext.PID()
+	// processStatus := c.testContext.ProcessContext.GetProcessStatus(pid)
+	// if processStatus.Status == "Running" && processStatus.User != "" {
 	if c.testContext.ProcessContext.PID() > 0 {
 		return errors.New("process is running")
 	}
