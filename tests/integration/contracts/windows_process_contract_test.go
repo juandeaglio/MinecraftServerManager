@@ -14,7 +14,11 @@ func TestProcessAPIContract(t *testing.T) {
 			return
 		}
 
-		stopAfterTest(pc)
+		t.Logf("Process started successfully with PID %d", pc.PID())
+
+		defer func(pc *process_context.ProcessImpl) {
+			_ = pc.Stop()
+		}(pc)
 
 		ps, err := pc.GetProcessStatus(pc.PID())
 
@@ -28,10 +32,25 @@ func TestProcessAPIContract(t *testing.T) {
 
 		t.Logf("Process status: %d", ps.Status)
 	})
-}
+	t.Run("Windows non-existent process contract", func(t *testing.T) {
+		pc := process_context.NewProcessInvoker(&process_context.WindowsOsOperations{}, "notepad.exe", "")
 
-func stopAfterTest(pc *process_context.ProcessImpl) {
-	defer func(pc *process_context.ProcessImpl) {
-		_ = pc.Stop()
-	}(pc)
+		defer func(pc *process_context.ProcessImpl) {
+			_ = pc.Stop()
+		}(pc)
+
+		ps, err := pc.GetProcessStatus(9999)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if ps.Status != windowsconstants.InvalidProcessStatus {
+			t.Errorf("Expected process to not be running, but got some other status.")
+		}
+
+		t.Logf("Process status: %d", ps.Status)
+
+	})
+
 }
