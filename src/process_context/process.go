@@ -77,7 +77,7 @@ func (p *ProcessImpl) Stop() error {
 	return nil
 }
 
-func (p *ProcessImpl) GetProcessStatus(pid int) ProcessStatus {
+func (p *ProcessImpl) GetProcessStatus(pid int) (ProcessStatus, error) {
 	return p.osOps.ProcessStatus(pid)
 }
 

@@ -2,6 +2,7 @@ package brokenosoperations
 
 import (
 	"errors"
+	"minecraftremote/src/process_context"
 	"os"
 	"os/exec"
 	"syscall"
@@ -31,3 +32,9 @@ func (b *BrokenOsOperations) KillProcess(process *os.Process) error {
 func (b *BrokenOsOperations) Signal(process *os.Process, signal syscall.Signal) error {
 	return errors.New("failed to signal process")
 }
+
+func (b *BrokenOsOperations) ProcessStatus(pid int) (process_context.ProcessStatus, error) {
+	return process_context.ProcessStatus{}, nil
+}
+
+var _ process_context.OsOperations = (*BrokenOsOperations)(nil)
