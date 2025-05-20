@@ -12,7 +12,7 @@ type Process interface {
 	Stop() error
 	PID() int
 	Started() bool
-	GetProcessStatus(pid int) (ProcessStatus, error)
+	GetProcessStatus(pid int) (*ProcessStatus, error)
 }
 type ProcessImpl struct {
 	cmd     *exec.Cmd
@@ -77,7 +77,7 @@ func (p *ProcessImpl) Stop() error {
 	return nil
 }
 
-func (p *ProcessImpl) GetProcessStatus(pid int) (ProcessStatus, error) {
+func (p *ProcessImpl) GetProcessStatus(pid int) (*ProcessStatus, error) {
 	return p.osOps.ProcessStatus(pid)
 }
 

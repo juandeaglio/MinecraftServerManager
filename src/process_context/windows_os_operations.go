@@ -6,13 +6,6 @@ import (
 	"syscall"
 )
 
-var (
-	kernel32                 = syscall.NewLazyDLL("kernel32.dll")
-	procOpenProcess          = kernel32.NewProc("OpenProcess")
-	procGetProcessMemoryInfo = psapi.NewProc("GetProcessMemoryInfo")
-	psapi                    = syscall.NewLazyDLL("psapi.dll")
-)
-
 // WindowsOsOperations implements OsOperations for Windows
 type WindowsOsOperations struct{}
 
@@ -43,9 +36,11 @@ func (w *WindowsOsOperations) KillProcess(process *os.Process) error {
 	return process.Kill()
 }
 
-func (w *WindowsOsOperations) ProcessStatus(pid int) (ProcessStatus, error) {
+func (w *WindowsOsOperations) ProcessStatus(pid int) (*ProcessStatus, error) {
 
-	return ProcessStatus{}, nil
+	return &ProcessStatus{
+		Status: 0x103,
+	}, nil
 }
 
 var _ OsOperations = (*WindowsOsOperations)(nil)

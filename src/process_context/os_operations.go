@@ -14,9 +14,9 @@ type OsOperations interface {
 	SetSysProcAttr(cmd *exec.Cmd)
 	StartCmd(cmd *exec.Cmd) error
 	KillProcess(process *os.Process) error
-	ProcessStatus(pid int) (ProcessStatus, error)
+	ProcessStatus(pid int) (*ProcessStatus, error)
 }
 
 type ProcessStatus struct {
-	Status string
+	Status uintptr
 }

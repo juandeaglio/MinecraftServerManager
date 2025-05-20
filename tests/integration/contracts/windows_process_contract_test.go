@@ -2,6 +2,7 @@ package contract_test
 
 import (
 	"minecraftremote/src/process_context"
+	"minecraftremote/src/windowsconstants"
 	"testing"
 )
 
@@ -15,13 +16,17 @@ func TestProcessAPIContract(t *testing.T) {
 
 		stopAfterTest(pc)
 
-		ps := pc.GetProcessStatus(pc.PID())
+		ps, err := pc.GetProcessStatus(pc.PID())
 
-		if ps.Status == "" {
-			t.Errorf("Expected process status, but got empty.")
+		if err != nil {
+			t.Fatal(err)
 		}
 
-		t.Logf("Process status: %s", ps.Status)
+		if ps.Status != windowsconstants.RunningStatus {
+			t.Errorf("Expected process to be running, but got some other status.")
+		}
+
+		t.Logf("Process status: %d", ps.Status)
 	})
 }
 
