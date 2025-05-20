@@ -41,3 +41,9 @@ func (f *FakeOsOperations) KillProcess(process *os.Process) error {
 	f.pid = 0
 	return nil
 }
+
+func (f *FakeOsOperations) ProcessStatus(pid int) (ProcessStatus, error) {
+	return ProcessStatus{}, nil
+}
+
+var _ OsOperations = (*FakeOsOperations)(nil)

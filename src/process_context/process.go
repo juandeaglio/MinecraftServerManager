@@ -12,13 +12,8 @@ type Process interface {
 	Stop() error
 	PID() int
 	Started() bool
-	GetProcessStatus(pid int) ProcessStatus
+	GetProcessStatus(pid int) (ProcessStatus, error)
 }
-
-type ProcessStatus struct {
-	Status string
-}
-
 type ProcessImpl struct {
 	cmd     *exec.Cmd
 	program string
@@ -83,7 +78,7 @@ func (p *ProcessImpl) Stop() error {
 }
 
 func (p *ProcessImpl) GetProcessStatus(pid int) ProcessStatus {
-	return ProcessStatus{}
+	return p.osOps.ProcessStatus(pid)
 }
 
 func NewProcessInvoker(osOps OsOperations, program string, args ...string) *ProcessImpl {
