@@ -37,13 +37,16 @@ func TestStartServer(t *testing.T) {
 	}
 }
 
-func TestWindowsOps(t *testing.T) {
+func TestWindowsOpsStart(t *testing.T) {
 	suite := runScenario(t, process_steps.StartProcess, "process_steps/windows_ops.feature:3")
 	if status := suite.Run(); status != 0 {
 		t.Fatalf("ProcessContext start test failed with status: %d", status)
 	}
 
-	suite = runScenario(t, process_steps.StopProcess, "process_steps/windows_ops.feature:8")
+}
+
+func TestWindowsOpsStop(t *testing.T) {
+	suite := runScenario(t, process_steps.StopProcess, "process_steps/windows_ops.feature:8")
 	if status := suite.Run(); status != 0 {
 		t.Fatalf("ProcessContext stop test failed with status: %d", status)
 	}
