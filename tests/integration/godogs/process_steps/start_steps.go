@@ -5,6 +5,7 @@ import (
 	"github.com/cucumber/godog"
 	"minecraftremote/src/process_context"
 	"minecraftremote/src/rcon"
+	"minecraftremote/src/windowsconstants"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
 )
 
@@ -31,7 +32,13 @@ func (c *startProcessFeature) processIsNotRunning() error {
 	// pid := c.testContext.ProcessContext.PID()
 	// processStatus := c.testContext.ProcessContext.GetProcessStatus(pid)
 	// if processStatus.Status == "Running" && processStatus.User != "" {
-	if c.testContext.ProcessContext.PID() > 0 {
+	pid := c.testContext.ProcessContext.PID()
+	ps, err := c.testContext.ProcessContext.GetProcessStatus(pid)
+	if err != nil {
+		return err
+	}
+
+	if pid > 0 && ps.Status != windowsconstants.InvalidProcessStatus {
 		return errors.New("process is running")
 	}
 	return nil
