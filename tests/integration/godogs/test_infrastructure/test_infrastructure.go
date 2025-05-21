@@ -75,7 +75,10 @@ func AfterScenarioHook(tc *TestContext) func(ctx context.Context, sc *godog.Scen
 		tc.Controls.Stop()
 
 		if tc.Server != nil {
-			tc.Server.Close()
+			err := tc.Server.Close()
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		return ctx, nil
