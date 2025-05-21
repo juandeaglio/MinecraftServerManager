@@ -43,10 +43,10 @@ func TestWindowsOps(t *testing.T) {
 		t.Fatalf("ProcessContext start test failed with status: %d", status)
 	}
 
-	//suite = runScenario(t, process_steps.StopProcess, "process_steps/windows_ops.feature:8")
-	//if status := suite.Run(); status != 0 {
-	//	t.Fatalf("ProcessContext stop test failed with status: %d", status)
-	//}
+	suite = runScenario(t, process_steps.StopProcess, "process_steps/windows_ops.feature:8")
+	if status := suite.Run(); status != 0 {
+		t.Fatalf("ProcessContext stop test failed with status: %d", status)
+	}
 }
 
 func runScenario(t *testing.T, scenarioFeature ScenarioContextFunc, featurePath string) godog.TestSuite {

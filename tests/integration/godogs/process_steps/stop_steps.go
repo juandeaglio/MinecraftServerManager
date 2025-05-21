@@ -2,14 +2,18 @@ package process_steps
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/cucumber/godog"
 	"minecraftremote/src/process_context"
 	"minecraftremote/src/rcon"
+	"minecraftremote/src/windowsconstants"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
 )
 
 type stopProcessFeature struct {
 	testContext *test_infrastructure.TestContext
+	pid         int
 }
 
 func BeforeScenarioHook(tc *test_infrastructure.TestContext) func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
@@ -24,7 +28,8 @@ func BeforeScenarioHook(tc *test_infrastructure.TestContext) func(ctx context.Co
 }
 
 func StopProcess(s *godog.ScenarioContext) {
-	c := &startProcessFeature{}
+	c := &stopProcessFeature{}
+
 	osOps := &process_context.WindowsOsOperations{}
 	c.testContext = test_infrastructure.NewTestContext(
 		rcon.NewStubRCONAdapter(),
@@ -40,10 +45,32 @@ func StopProcess(s *godog.ScenarioContext) {
 	s.After(test_infrastructure.AfterScenarioHook(c.testContext))
 }
 
-func (c *startProcessFeature) stopProcess() error {
-	err := c.testContext.ProcessContext.Start()
+func (c *stopProcessFeature) processIsRunning() error {
+	c.pid = c.testContext.ProcessContext.PID()
+	if c.pid > 0 {
+		return nil
+	}
+
+	return errors.New("process is not running")
+}
+
+func (c *stopProcessFeature) stopProcess() error {
+	err := c.testContext.ProcessContext.Stop()
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (c *stopProcessFeature) processIsNotRunning() error {
+	ps, err := c.testContext.ProcessContext.GetProcessStatus(c.pid)
+
+	if err != nil {
+		return err
+	}
+
+	if ps.Status != windowsconstants.ParentKilledChildStatus {
+		return fmt.Errorf("process did not exit, instead it shows exit code %d", ps.Status)
 	}
 	return nil
 }
