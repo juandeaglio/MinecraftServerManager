@@ -2,7 +2,6 @@ package process_context
 
 import (
 	"fmt"
-	"minecraftremote/src/windowsconstants"
 	"os"
 	"os/exec"
 	"syscall"
@@ -49,6 +48,30 @@ func (w *WindowsOsOperations) ProcessStatus(pid int) (*ProcessStatus, error) {
 	}, nil
 }
 
+func getStatus(pid uint32) (uintptr, error) {
+	handle, err := syscall.OpenProcess(syscall.PROCESS_QUERY_INFORMATION, false, pid)
+	if err != nil {
+		errno, ok := err.(syscall.Errno)
+		if !ok {
+			return 0, err // Unknown error, bail
+		}
+		return uintptr(errno), nil
+
+	}
+	defer syscall.CloseHandle(handle)
+
+	ntdll := syscall.NewLazyDLL("ntdll.dll")
+	procNtQueryInformationProcess := ntdll.NewProc("NtQueryInformationProcess")
+
+	pbi, status := getStatusCode(procNtQueryInformationProcess, handle)
+
+	if status != 0 {
+		return 0, fmt.Errorf("NtQueryInformationProcess failed with status 0x%x", status)
+	}
+
+	return pbi.ExitStatus, nil
+}
+
 const (
 	ProcessBasicInformation = 0
 )
@@ -62,24 +85,7 @@ type PROCESS_BASIC_INFORMATION struct {
 	InheritedFromUniqueProcessID uintptr
 }
 
-func getStatus(pid uint32) (uintptr, error) {
-	handle, err := syscall.OpenProcess(syscall.PROCESS_QUERY_INFORMATION, false, pid)
-	if err != nil {
-		errno, ok := err.(syscall.Errno)
-		if !ok {
-			return 0, err // Unknown error, bail
-		}
-
-		switch errno {
-		case windowsconstants.InvalidProcessStatus:
-			return windowsconstants.InvalidProcessStatus, nil
-		}
-	}
-	defer syscall.CloseHandle(handle)
-
-	ntdll := syscall.NewLazyDLL("ntdll.dll")
-	procNtQueryInformationProcess := ntdll.NewProc("NtQueryInformationProcess")
-
+func getStatusCode(procNtQueryInformationProcess *syscall.LazyProc, handle syscall.Handle) (PROCESS_BASIC_INFORMATION, uintptr) {
 	var pbi PROCESS_BASIC_INFORMATION
 	var returnLength uintptr
 
@@ -90,13 +96,7 @@ func getStatus(pid uint32) (uintptr, error) {
 		unsafe.Sizeof(pbi),
 		uintptr(unsafe.Pointer(&returnLength)),
 	)
-
-	if status != 0 {
-		return 0, fmt.Errorf("NtQueryInformationProcess failed with status 0x%x", status)
-	}
-
-	// STATUS_PENDING (0x103) means the process is still running
-	return pbi.ExitStatus, nil
+	return pbi, status
 }
 
 var _ OsOperations = (*WindowsOsOperations)(nil)
