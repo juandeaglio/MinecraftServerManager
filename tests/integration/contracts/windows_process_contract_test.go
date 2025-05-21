@@ -32,6 +32,7 @@ func TestProcessAPIContract(t *testing.T) {
 
 		t.Logf("Process status: %d", ps.Status)
 	})
+
 	t.Run("Windows non-existent process contract", func(t *testing.T) {
 		pc := process_context.NewProcessInvoker(&process_context.WindowsOsOperations{}, "notepad.exe", "")
 
@@ -51,6 +52,36 @@ func TestProcessAPIContract(t *testing.T) {
 
 		t.Logf("Process status: %d", ps.Status)
 
+	})
+
+	t.Run("Windows parents killed child process contract", func(t *testing.T) {
+		pc := process_context.NewProcessInvoker(&process_context.WindowsOsOperations{}, "notepad.exe", "")
+		err := pc.Start()
+		if err != nil {
+			return
+		}
+
+		t.Logf("Process started successfully with PID %d", pc.PID())
+
+		pid := pc.PID()
+
+		err = pc.Stop()
+		if err != nil {
+			return
+		}
+		t.Logf("Process stopped successfully with PID %d", pc.PID())
+
+		ps, err := pc.GetProcessStatus(pid)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if ps.Status != windowsconstants.ParentKilledChildStatus {
+			t.Errorf("Expected process to have exited successfully, but got some other status %d.", ps.Status)
+		}
+
+		t.Logf("Process status: %d", ps.Status)
 	})
 
 }
