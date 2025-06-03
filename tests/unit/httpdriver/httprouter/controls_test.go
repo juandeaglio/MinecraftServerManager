@@ -9,21 +9,21 @@ import (
 )
 
 func TestEmptyServerHas0Players(t *testing.T) {
-	controls := controls.NewControls(nil, &process_context.ProcessImpl{})
-	assert.Equalf(t, 0, controls.Status().Players, "Got more than 0 players on an empty server.")
+	serverControls := controls.NewControls(nil, &process_context.ProcessImpl{})
+	assert.Equalf(t, 0, serverControls.Status().Players, "Got more than 0 players on an empty server.")
 }
 
 func TestStartServerControls(t *testing.T) {
-	controls := controls.NewControls(nil, &process_context.ProcessImpl{})
-	controls.Start(process_context.NewProcessInvoker(&process_context.FakeOsOperations{}, "fake", "args"))
-	assert.Truef(t, controls.IsStarted(), "The server process failed to start.")
+	serverControls := controls.NewControls(nil, &process_context.ProcessImpl{})
+	serverControls.Start(process_context.NewProcessInvoker(&process_context.FakeOsOperations{}, "fake", "args"))
+	assert.Truef(t, serverControls.IsStarted(), "The server process failed to start.")
 }
 
 func TestStopServerControls(t *testing.T) {
-	controls := controls.NewControls(nil, &process_context.ProcessImpl{})
-	controls.Start(process_context.NewProcessInvoker(&process_context.FakeOsOperations{}, "fake", "args"))
-	controls.Stop()
-	assert.Falsef(t, controls.IsStarted(), "The server process failed to stop.")
+	serverControls := controls.NewControls(nil, &process_context.ProcessImpl{})
+	serverControls.Start(process_context.NewProcessInvoker(&process_context.FakeOsOperations{}, "fake", "args"))
+	serverControls.Stop()
+	assert.Falsef(t, serverControls.IsStarted(), "The server process failed to stop.")
 }
 
 func TestOfflineServerStatus(t *testing.T) {
