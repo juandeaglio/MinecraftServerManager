@@ -47,10 +47,6 @@ func (m *Controls) Start(serverProcess process_context.Process) process_context.
 	return serverProcess
 }
 
-func isPIDValid(pid int) bool {
-	return pid > 0
-}
-
 func (m *Controls) Stop() bool {
 	if m.started {
 		err := m.processInvoker.Stop()
