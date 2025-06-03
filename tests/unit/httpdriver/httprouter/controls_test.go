@@ -27,7 +27,6 @@ func TestStopServerControls(t *testing.T) {
 }
 
 func TestOfflineServerStatus(t *testing.T) {
-	controls := controls.NewControls(nil, &process_context.ProcessImpl{})
-
-	assert.Falsef(t, controls.Status().Online, "Server with no PID should report as offline.")
+	serverControls := controls.NewControls(nil, &process_context.ProcessImpl{})
+	assert.Falsef(t, serverControls.Status().Online, "Server with no PID should report as offline.")
 }
