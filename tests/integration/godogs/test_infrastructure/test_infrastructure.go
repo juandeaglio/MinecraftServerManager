@@ -69,7 +69,13 @@ func BeforeScenarioWithNotepadHook(tc *TestContext, port string) func(ctx contex
 func AfterScenarioHook(tc *TestContext) func(ctx context.Context, sc *godog.Scenario, err error) (context.Context, error) {
 	return func(ctx context.Context, sc *godog.Scenario, err error) (context.Context, error) {
 		if err != nil {
+
 			log.Printf("Scenario %s failed due to: %s", sc.Name, err.Error())
+		}
+
+		err = tc.ProcessContext.Stop()
+		if err != nil {
+			return nil, err
 		}
 
 		tc.Controls.Stop()

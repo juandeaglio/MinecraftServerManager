@@ -3,21 +3,22 @@ package controls
 import (
 	"minecraftremote/src/process_context"
 	"minecraftremote/src/rcon"
+	"minecraftremote/src/windowsconstants"
 	"time"
 )
 
 type Controls struct {
-	serverInBackground process_context.Process
-	started            bool
-	rcon               rcon.RCONAdapter
+	processInvoker process_context.Process
+	started        bool
+	rcon           rcon.RCONAdapter
 }
 
 // IsStarted implements controls.Controls.
 func (m *Controls) IsStarted() bool {
-	if m.serverInBackground == nil {
+	if m.processInvoker == nil {
 		return false
 	}
-	return m.serverInBackground.Started()
+	return m.processInvoker.Started()
 }
 
 func (m *Controls) Status() *rcon.Status {
@@ -29,18 +30,21 @@ func (m *Controls) Status() *rcon.Status {
 	return m.rcon.GetStatus()
 }
 
-func (m *Controls) Start(minecraftServer process_context.Process) process_context.Process {
-	m.serverInBackground = minecraftServer
+func (m *Controls) Start(serverProcess process_context.Process) process_context.Process {
+	m.processInvoker = serverProcess
 
-	err := minecraftServer.Start()
+	err := serverProcess.Start()
 	if err != nil {
 		return nil
 	}
+	pid := serverProcess.PID()
+	ps, err := serverProcess.GetProcessStatus(pid)
+	if err != nil {
+		return nil
+	}
+	m.started = ps.Status == windowsconstants.RunningStatus
 
-	pid := minecraftServer.PID()
-	m.started = isPIDValid(pid)
-
-	return minecraftServer
+	return serverProcess
 }
 
 func isPIDValid(pid int) bool {
@@ -49,7 +53,7 @@ func isPIDValid(pid int) bool {
 
 func (m *Controls) Stop() bool {
 	if m.started {
-		err := m.serverInBackground.Stop()
+		err := m.processInvoker.Stop()
 		if err != nil {
 			return false
 		}
@@ -58,7 +62,7 @@ func (m *Controls) Stop() bool {
 		time.Sleep(100 * time.Millisecond)
 
 		// Verify process is actually stopped
-		if m.serverInBackground.Started() {
+		if m.processInvoker.Started() {
 			return false
 		}
 
@@ -71,7 +75,7 @@ func (m *Controls) Stop() bool {
 func NewControls(rcon rcon.RCONAdapter, process ...process_context.Process) *Controls {
 	controls := &Controls{}
 	if len(process) > 0 {
-		controls.serverInBackground = process[0]
+		controls.processInvoker = process[0]
 	}
 	controls.rcon = rcon
 	return controls
