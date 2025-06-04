@@ -55,7 +55,9 @@ func (m *MinecraftRCONAdapter) GetStatus() *Status {
 		return nil
 	}
 
-	defer conn.Close()
+	defer func(conn *mcrcon.Conn) {
+		_ = conn.Close()
+	}(conn)
 
 	_, err = conn.Execute("help")
 	if err != nil {

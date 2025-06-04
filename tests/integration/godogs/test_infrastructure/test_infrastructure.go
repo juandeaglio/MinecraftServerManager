@@ -91,25 +91,12 @@ func AfterScenarioHook(tc *TestContext) func(ctx context.Context, sc *godog.Scen
 	}
 }
 
-func CombineBeforeHooks(hooks ...func(ctx context.Context, sc *godog.Scenario) (context.Context, error)) func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-	return func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
-		var err error
-		for _, hook := range hooks {
-			ctx, err = hook(ctx, sc)
-			if err != nil {
-				return ctx, err
-			}
-		}
-		return ctx, nil
-	}
-}
-
 func WaitForServerReady(url string, timeout time.Duration) {
 	deadline := time.Now().Add(timeout)
 	for time.Now().Before(deadline) {
 		resp, err := http.Get(url)
 		if err == nil {
-			resp.Body.Close()
+			_ = resp.Body.Close()
 			return
 		}
 		time.Sleep(100 * time.Millisecond)
