@@ -4,7 +4,6 @@ import (
 	"minecraftremote/src/process_context"
 	"minecraftremote/src/rcon"
 	"minecraftremote/src/windowsconstants"
-	"time"
 )
 
 type Controls struct {
@@ -53,9 +52,6 @@ func (m *Controls) Stop() bool {
 		if err != nil {
 			return false
 		}
-
-		// Give a small window for the process to die
-		time.Sleep(100 * time.Millisecond)
 
 		// Verify process is actually stopped
 		if m.processInvoker.Started() {

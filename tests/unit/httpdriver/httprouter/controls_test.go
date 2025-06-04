@@ -22,8 +22,7 @@ func TestStartServerControls(t *testing.T) {
 func TestStopServerControls(t *testing.T) {
 	serverControls := controls.NewControls(nil, &process_context.ProcessImpl{})
 	serverControls.Start(process_context.NewProcessInvoker(&process_context.FakeOsOperations{}, "fake", "args"))
-	serverControls.Stop()
-	assert.Falsef(t, serverControls.IsStarted(), "The server process failed to stop.")
+	assert.Truef(t, serverControls.Stop(), "The server process failed to stop.")
 }
 
 func TestOfflineServerStatus(t *testing.T) {
