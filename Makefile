@@ -62,4 +62,8 @@ merge-coverage: coverage-dir
 coverage-report: cover-all merge-coverage
 	go tool cover -html=coverage/merged.out -o coverage/full_coverage.html
 
-.PHONY: coverage-dir cover-controls cover-process cover-rcon cover-httprouter cover-httprouteradapter cover-remoteconnection coverage-html cover-all clean-coverage merge-coverage coverage-report
+
+lint:
+	golangci-lint run ./...
+
+.PHONY: coverage-dir cover-controls cover-process cover-rcon cover-httprouter cover-httprouteradapter cover-remoteconnection coverage-html cover-all clean-coverage merge-coverage coverage-report lint

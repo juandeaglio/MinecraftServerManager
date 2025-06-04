@@ -1,0 +1,28 @@
+name: golang-ci.yml
+
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+      - name: Lint
+      run:
+        timeout: 2m
+
+      linters:
+        enable:
+          - govet
+          - staticcheck
+          - gofmt
+          - golint
+          - errcheck
+          - ineffassign
+          - deadcode
+
