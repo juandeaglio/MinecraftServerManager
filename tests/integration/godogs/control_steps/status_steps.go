@@ -17,7 +17,6 @@ type StatusServerFeature struct {
 }
 
 const statusRequestURL = constants.BaseURL + "8080" + constants.StatusURL
-const runningURL = constants.BaseURL + "8080" + constants.RunningURL
 
 func ServerStatusScenarioContext(s *godog.ScenarioContext) {
 	osOps := &process_context.WindowsOsOperations{}

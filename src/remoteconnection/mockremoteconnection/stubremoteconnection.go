@@ -6,7 +6,6 @@ import (
 )
 
 type MockStatusResponse struct {
-	totalPlayers int
 }
 
 func (mr *MockStatusResponse) TotalPlayers() int {
@@ -27,10 +26,6 @@ func (m *MockRemoteConnection) IsAvailable() bool {
 
 func (m *MockRemoteConnection) PollServer() remoteconnection.StatusResponse {
 	return NewMockStatusResponse()
-}
-
-func NewMockRemoteConnection(portNum int) *MockRemoteConnection {
-	return &MockRemoteConnection{portNum: portNum}
 }
 
 var _ remoteconnection.RemoteConnection = (*MockRemoteConnection)(nil)

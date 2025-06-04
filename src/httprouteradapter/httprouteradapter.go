@@ -21,7 +21,10 @@ func (a *HTTPRouterAdapter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(response.StatusCode)
 
 	if response.Body != nil {
-		io.Copy(w, response.Body)
-		response.Body.Close()
+		_, _ = io.Copy(w, response.Body)
+		err := response.Body.Close()
+		if err != nil {
+			return
+		}
 	}
 }

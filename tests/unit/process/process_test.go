@@ -11,10 +11,10 @@ import (
 
 func TestProcess(t *testing.T) {
 	fakeProcess := process_context.NewProcessInvoker(&process_context.FakeOsOperations{}, "fake", "args")
-	fakeProcess.Start()
+	_ = fakeProcess.Start()
 	assert.Truef(t, fakeProcess.Started(), "ProcessContext failed to start.")
 
-	fakeProcess.Stop()
+	_ = fakeProcess.Stop()
 	assert.Falsef(t, fakeProcess.Started(), "ProcessContext is still marked as started after stopping")
 }
 

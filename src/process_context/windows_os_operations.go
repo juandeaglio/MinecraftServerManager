@@ -58,7 +58,9 @@ func getStatus(pid uint32) (uintptr, error) {
 		return uintptr(errno), nil
 
 	}
-	defer syscall.CloseHandle(handle)
+	defer func(handle syscall.Handle) {
+		_ = syscall.CloseHandle(handle)
+	}(handle)
 
 	ntdll := syscall.NewLazyDLL("ntdll.dll")
 	procNtQueryInformationProcess := ntdll.NewProc("NtQueryInformationProcess")

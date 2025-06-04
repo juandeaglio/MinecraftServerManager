@@ -38,7 +38,7 @@ func (c *checkServerFeature) serverIsRunning() error {
 }
 
 func (c *checkServerFeature) clientSendsStopRequest() error {
-	http.Get(constants.BaseURL + "8082" + constants.StopURL)
+	_, _ = http.Get(constants.BaseURL + "8082" + constants.StopURL)
 	resp, err := http.Get(constants.BaseURL + "8082" + constants.RunningURL)
 	if err != nil {
 		return fmt.Errorf("failed to send stop request: %v", err)

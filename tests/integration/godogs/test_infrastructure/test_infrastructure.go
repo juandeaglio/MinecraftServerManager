@@ -29,12 +29,12 @@ func NewTestContext(rconAdapter rcon.RCONAdapter, process process_context.Proces
 	if rconAdapter == nil {
 		rconAdapter = rcon.NewMinecraftRCONAdapter()
 	}
-	controls := controls.NewControls(rconAdapter, process)
-	router := httprouter.NewHTTPRouter(controls, process)
+	serverControls := controls.NewControls(rconAdapter, process)
+	router := httprouter.NewHTTPRouter(serverControls, process)
 	adapter := &httprouteradapter.HTTPRouterAdapter{Router: router}
 
 	return &TestContext{
-		Controls:       controls,
+		Controls:       serverControls,
 		Router:         router,
 		Adapter:        adapter,
 		ProcessContext: process,
@@ -57,7 +57,7 @@ func BeforeScenarioWithNotepadHook(tc *TestContext, port string) func(ctx contex
 	return func(ctx context.Context, sc *godog.Scenario) (context.Context, error) {
 		log.Printf("Running scenario: %s", sc.Name)
 		tc.Server = StartServerWithRouter(tc.Adapter, port)
-		http.Get("http://localhost:" + port + "/start")
+		_, _ = http.Get("http://localhost:" + port + "/start")
 		fmt.Println("Sent start request to server")
 		WaitForServerReady("http://localhost:"+port+"/running", 5*time.Second)
 
