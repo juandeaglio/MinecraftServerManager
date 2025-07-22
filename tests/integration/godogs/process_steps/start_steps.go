@@ -3,7 +3,7 @@ package process_steps
 import (
 	"errors"
 	"github.com/cucumber/godog"
-	"minecraftremote/src/process_context"
+	"minecraftremote/src/os_api_adapter"
 	"minecraftremote/src/rcon"
 	"minecraftremote/src/windowsconstants"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
@@ -15,10 +15,10 @@ type startProcessFeature struct {
 
 func StartProcess(s *godog.ScenarioContext) {
 	c := &startProcessFeature{}
-	osOps := &process_context.WindowsOsOperations{}
+	osOps := &os_api_adapter.WindowsOsOperations{}
 	c.testContext = test_infrastructure.NewTestContext(
 		rcon.NewStubRCONAdapter(),
-		process_context.NewProcessInvoker(osOps, "notepad.exe", ""),
+		os_api_adapter.NewProcessInvoker(osOps, "notepad.exe", ""),
 	)
 
 	s.Given(`^a process is not running$`, c.processIsNotRunning)

@@ -1,13 +1,13 @@
 package contract_test
 
 import (
-	"minecraftremote/src/process_context"
+	"minecraftremote/src/os_api_adapter"
 	"minecraftremote/src/windowsconstants"
 	"testing"
 )
 
 func TestWindowsRunningProcessContract(t *testing.T) {
-	pc := process_context.NewProcessInvoker(&process_context.WindowsOsOperations{}, "notepad.exe", "")
+	pc := os_api_adapter.NewProcessInvoker(&os_api_adapter.WindowsOsOperations{}, "notepad.exe", "")
 	err := pc.Start()
 	if err != nil {
 		return
@@ -15,7 +15,7 @@ func TestWindowsRunningProcessContract(t *testing.T) {
 
 	t.Logf("Process started successfully with PID %d", pc.PID())
 
-	defer func(pc *process_context.ProcessImpl) {
+	defer func(pc *os_api_adapter.ProcessImpl) {
 		_ = pc.Stop()
 	}(pc)
 
@@ -32,9 +32,9 @@ func TestWindowsRunningProcessContract(t *testing.T) {
 	t.Logf("Process status: %d", ps.Status)
 }
 func TestWindowsProcessNonExistentContract(t *testing.T) {
-	pc := process_context.NewProcessInvoker(&process_context.WindowsOsOperations{}, "notepad.exe", "")
+	pc := os_api_adapter.NewProcessInvoker(&os_api_adapter.WindowsOsOperations{}, "notepad.exe", "")
 
-	defer func(pc *process_context.ProcessImpl) {
+	defer func(pc *os_api_adapter.ProcessImpl) {
 		_ = pc.Stop()
 	}(pc)
 
@@ -53,7 +53,7 @@ func TestWindowsProcessNonExistentContract(t *testing.T) {
 }
 
 func TestWindowsKilledProcessContract(t *testing.T) {
-	pc := process_context.NewProcessInvoker(&process_context.WindowsOsOperations{}, "notepad.exe", "")
+	pc := os_api_adapter.NewProcessInvoker(&os_api_adapter.WindowsOsOperations{}, "notepad.exe", "")
 	err := pc.Start()
 	if err != nil {
 		return

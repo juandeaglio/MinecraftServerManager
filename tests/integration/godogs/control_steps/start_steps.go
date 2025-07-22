@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"minecraftremote/src/process_context"
+	"minecraftremote/src/os_api_adapter"
 	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/constants"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
@@ -25,10 +25,10 @@ const startURL = constants.BaseURL + port + constants.StartURL
 func ClientStartsServer(s *godog.ScenarioContext) {
 	rconAdapter := rcon.NewMinecraftRCONAdapter()
 	rconAdapter.WithTimeout(1 * time.Second)
-	osOps := &process_context.WindowsOsOperations{}
+	osOps := &os_api_adapter.WindowsOsOperations{}
 	tc := test_infrastructure.NewTestContext(
 		rconAdapter,
-		process_context.NewProcessInvoker(osOps, "notepad.exe", ""))
+		os_api_adapter.NewProcessInvoker(osOps, "notepad.exe", ""))
 
 	c := &startServerFeature{testContext: tc}
 

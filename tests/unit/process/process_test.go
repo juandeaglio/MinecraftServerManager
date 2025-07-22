@@ -3,14 +3,14 @@ package processtest
 import (
 	"testing"
 
-	"minecraftremote/src/process_context"
+	"minecraftremote/src/os_api_adapter"
 	"minecraftremote/tests/unit/process/brokenosoperations"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestProcess(t *testing.T) {
-	fakeProcess := process_context.NewProcessInvoker(&process_context.FakeOsOperations{}, "fake", "args")
+	fakeProcess := os_api_adapter.NewProcessInvoker(&os_api_adapter.FakeOsOperations{}, "fake", "args")
 	_ = fakeProcess.Start()
 	assert.Truef(t, fakeProcess.Started(), "ProcessContext failed to start.")
 
@@ -19,7 +19,7 @@ func TestProcess(t *testing.T) {
 }
 
 func TestProcessError(t *testing.T) {
-	fakeProcess := process_context.NewProcessInvoker(&brokenosoperations.BrokenOsOperations{}, "fake", "args")
+	fakeProcess := os_api_adapter.NewProcessInvoker(&brokenosoperations.BrokenOsOperations{}, "fake", "args")
 	err := fakeProcess.Start()
 	assert.Error(t, err)
 }

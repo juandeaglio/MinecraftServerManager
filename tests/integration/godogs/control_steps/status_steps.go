@@ -2,7 +2,7 @@ package control_server_steps
 
 import (
 	"fmt"
-	"minecraftremote/src/process_context"
+	"minecraftremote/src/os_api_adapter"
 	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/constants"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
@@ -19,10 +19,10 @@ type StatusServerFeature struct {
 const statusRequestURL = constants.BaseURL + "8080" + constants.StatusURL
 
 func ServerStatusScenarioContext(s *godog.ScenarioContext) {
-	osOps := &process_context.WindowsOsOperations{}
+	osOps := &os_api_adapter.WindowsOsOperations{}
 	tc := test_infrastructure.NewTestContext(
 		rcon.NewStubRCONAdapter(),
-		process_context.NewProcessInvoker(osOps, "notepad.exe", ""),
+		os_api_adapter.NewProcessInvoker(osOps, "notepad.exe", ""),
 	)
 	c := &StatusServerFeature{testContext: tc}
 

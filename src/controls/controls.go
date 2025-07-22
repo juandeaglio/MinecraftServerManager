@@ -1,13 +1,13 @@
 package controls
 
 import (
-	"minecraftremote/src/process_context"
+	"minecraftremote/src/os_api_adapter"
 	"minecraftremote/src/rcon"
 	"minecraftremote/src/windowsconstants"
 )
 
 type Controls struct {
-	processInvoker process_context.Process
+	processInvoker os_api_adapter.Process
 	started        bool
 	rcon           rcon.RCONAdapter
 }
@@ -29,7 +29,7 @@ func (m *Controls) Status() *rcon.Status {
 	return m.rcon.GetStatus()
 }
 
-func (m *Controls) Start(serverProcess process_context.Process) process_context.Process {
+func (m *Controls) Start(serverProcess os_api_adapter.Process) os_api_adapter.Process {
 	m.processInvoker = serverProcess
 
 	err := serverProcess.Start()
@@ -64,7 +64,7 @@ func (m *Controls) Stop() bool {
 	return false
 }
 
-func NewControls(rcon rcon.RCONAdapter, process ...process_context.Process) *Controls {
+func NewControls(rcon rcon.RCONAdapter, process ...os_api_adapter.Process) *Controls {
 	controls := &Controls{}
 	if len(process) > 0 {
 		controls.processInvoker = process[0]
