@@ -1,11 +1,11 @@
 integration-test:
-	go test .\tests\integration\godogs\... -v
+	go test ./tests/integration/godogs/... -v
 
 contract-test:
-	go test .\tests\integration\contracts\... -v
+	go test ./tests/integration/contracts/... -v
 
 unit-test:
-	go test $(if $(dir),.\tests\unit\$(dir),.\tests\unit\...) -v
+	go test $(if $(dir),./tests/unit/$(dir),./tests/unit/...) -v
 
 all-test: unit-test integration-test contract-test
 

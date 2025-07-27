@@ -1,0 +1,37 @@
+# Use Debian Bookworm Slim as the base image
+FROM debian:bookworm-slim
+
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    curl \
+    git \
+    make \
+    golang-go \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install golangci-lint manually
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s v2.3.0
+
+RUN golangci-lint --version
+
+# Set working directory
+WORKDIR /app
+
+# Copy go mod and sum files
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy the entire project
+COPY . .
+
+# Install Godog for BDD testing
+# RUN go install github.com/cucumber/godog/cmd/godog@latest
+
+# Run linter
+# RUN golangci-lint run ./...
+
+# Create interactive session
+CMD ["bash", "-c", "/bin/bash"]
