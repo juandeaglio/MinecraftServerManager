@@ -5,7 +5,6 @@ import (
 	"minecraftremote/src/os_api_adapter"
 	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
-	"minecraftremote/tests/unit/httpdriver/cannedrequests"
 	"net/http"
 
 	"github.com/cucumber/godog"
@@ -17,10 +16,10 @@ type startServerFeature struct {
 
 func StartServer(s *godog.ScenarioContext) {
 	c := &startServerFeature{}
-	osOps := &os_api_adapter.WindowsOsOperations{}
+	realOsOps := &os_api_adapter.WindowsOsOperations{}
 	c.testContext = test_infrastructure.NewTestContext(
 		rcon.NewStubRCONAdapter(),
-		os_api_adapter.NewProcessInvoker(osOps, "notepad.exe", ""),
+		os_api_adapter.NewProcessInvoker(realOsOps, "notepad.exe", ""),
 	)
 	s.Before(test_infrastructure.BeforeScenarioHook(c.testContext, "8083"))
 
@@ -43,10 +42,23 @@ func (c *startServerFeature) processIsNotRunning() error {
 }
 
 func (c *startServerFeature) processStarts() error {
-	c.testContext.Router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
+	resp, err := http.Get("http://localhost:8083/start")
+	if err != nil {
+		return fmt.Errorf("failed to start the server: %v", err)
+	}
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("server is not running when it should be")
+	}
 	return nil
 }
 
 func (c *startServerFeature) processIsRunning() error {
+	resp, err := http.Get("http://localhost:8083/running")
+	if err != nil {
+		return fmt.Errorf("failed to get server running status: %v", err)
+	}
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("server is not running when it should be")
+	}
 	return nil
 }
