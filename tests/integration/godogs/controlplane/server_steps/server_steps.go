@@ -19,7 +19,7 @@ func StartServer(s *godog.ScenarioContext) {
 	realOsOps := &os_api_adapter.WindowsOsOperations{}
 	c.testContext = test_infrastructure.NewTestContext(
 		rcon.NewStubRCONAdapter(),
-		os_api_adapter.NewProcessInvoker(realOsOps, "notepad.exe", ""),
+		os_api_adapter.NewProcessHandler(realOsOps, "notepad.exe", ""),
 	)
 	s.Before(test_infrastructure.BeforeScenarioHook(c.testContext, "8083"))
 

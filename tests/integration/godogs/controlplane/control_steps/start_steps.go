@@ -28,7 +28,7 @@ func ClientStartsServer(s *godog.ScenarioContext) {
 	osOps := &os_api_adapter.WindowsOsOperations{}
 	tc := test_infrastructure.NewTestContext(
 		rconAdapter,
-		os_api_adapter.NewProcessInvoker(osOps, "notepad.exe", ""))
+		os_api_adapter.NewProcessHandler(osOps, "notepad.exe", ""))
 
 	c := &startServerFeature{testContext: tc}
 

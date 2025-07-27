@@ -10,7 +10,7 @@ import (
 )
 
 func TestProcess(t *testing.T) {
-	fakeProcess := os_api_adapter.NewProcessInvoker(&os_api_adapter.FakeOsOperations{}, "fake", "args")
+	fakeProcess := os_api_adapter.NewProcessHandler(&os_api_adapter.FakeOsOperations{}, "fake", "args")
 	_ = fakeProcess.Start()
 	assert.Truef(t, fakeProcess.Started(), "ProcessContext failed to start.")
 
@@ -19,7 +19,7 @@ func TestProcess(t *testing.T) {
 }
 
 func TestProcessError(t *testing.T) {
-	fakeProcess := os_api_adapter.NewProcessInvoker(&brokenosoperations.BrokenOsOperations{}, "fake", "args")
+	fakeProcess := os_api_adapter.NewProcessHandler(&brokenosoperations.BrokenOsOperations{}, "fake", "args")
 	err := fakeProcess.Start()
 	assert.Error(t, err)
 }

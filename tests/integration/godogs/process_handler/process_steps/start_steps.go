@@ -18,7 +18,7 @@ func StartProcess(s *godog.ScenarioContext) {
 	osOps := &os_api_adapter.WindowsOsOperations{}
 	c.testContext = test_infrastructure.NewTestContext(
 		rcon.NewStubRCONAdapter(),
-		os_api_adapter.NewProcessInvoker(osOps, "notepad.exe", ""),
+		os_api_adapter.NewProcessHandler(osOps, "notepad.exe", ""),
 	)
 
 	s.Given(`^a process is not running$`, c.processIsNotRunning)

@@ -15,13 +15,13 @@ func TestEmptyServerHas0Players(t *testing.T) {
 
 func TestStartServerControls(t *testing.T) {
 	serverControls := controls.NewControls(nil, &os_api_adapter.ProcessImpl{})
-	serverControls.Start(os_api_adapter.NewProcessInvoker(&os_api_adapter.FakeOsOperations{}, "fake", "args"))
+	serverControls.Start(os_api_adapter.NewProcessHandler(&os_api_adapter.FakeOsOperations{}, "fake", "args"))
 	assert.Truef(t, serverControls.IsStarted(), "The server process failed to start.")
 }
 
 func TestStopServerControls(t *testing.T) {
 	serverControls := controls.NewControls(nil, &os_api_adapter.ProcessImpl{})
-	serverControls.Start(os_api_adapter.NewProcessInvoker(&os_api_adapter.FakeOsOperations{}, "fake", "args"))
+	serverControls.Start(os_api_adapter.NewProcessHandler(&os_api_adapter.FakeOsOperations{}, "fake", "args"))
 	assert.Truef(t, serverControls.Stop(), "The server process failed to stop.")
 }
 

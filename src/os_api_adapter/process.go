@@ -81,7 +81,7 @@ func (p *ProcessImpl) GetProcessStatus(pid int) (*ProcessStatus, error) {
 	return p.osOps.ProcessStatus(pid)
 }
 
-func NewProcessInvoker(osOps OsOperations, program string, args ...string) *ProcessImpl {
+func NewProcessHandler(osOps OsOperations, program string, args ...string) *ProcessImpl {
 	return &ProcessImpl{
 		program: program,
 		args:    args,

@@ -14,7 +14,7 @@ import (
 
 func main() {
 	osOps := &os_api_adapter.WindowsOsOperations{}
-	newProcess := os_api_adapter.NewProcessInvoker(osOps, "notepad.exe", "")
+	newProcess := os_api_adapter.NewProcessHandler(osOps, "notepad.exe", "")
 	mcControls := controls.NewControls(rcon.NewStubRCONAdapter(), newProcess)
 	router := httprouter.NewHTTPRouter(mcControls, newProcess)
 	adapter := &httprouteradapter.HTTPRouterAdapter{Router: router}

@@ -16,7 +16,7 @@ import (
 func TestStartServer(t *testing.T) {
 	router := httprouter.NewHTTPRouter(
 		controls.NewControls(nil),
-		os_api_adapter.NewProcessInvoker(&os_api_adapter.FakeOsOperations{}, "fake", "args"),
+		os_api_adapter.NewProcessHandler(&os_api_adapter.FakeOsOperations{}, "fake", "args"),
 	)
 	resp := router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
 	assert.Equalf(t, 200, resp.StatusCode, "Server did not start successfully")
@@ -25,7 +25,7 @@ func TestStartServer(t *testing.T) {
 func TestFailtoStartServer(t *testing.T) {
 	router := httprouter.NewHTTPRouter(
 		controls.NewControls(nil),
-		os_api_adapter.NewProcessInvoker(&brokenosoperations.BrokenOsOperations{}, "fake", "args"),
+		os_api_adapter.NewProcessHandler(&brokenosoperations.BrokenOsOperations{}, "fake", "args"),
 	)
 	resp := router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
 	assert.Equalf(t, 500, resp.StatusCode, "Server did not start successfully")
@@ -34,7 +34,7 @@ func TestFailtoStartServer(t *testing.T) {
 func TestStopServer(t *testing.T) {
 	router := httprouter.NewHTTPRouter(
 		controls.NewControls(nil),
-		os_api_adapter.NewProcessInvoker(&os_api_adapter.FakeOsOperations{}, "fake", "args"),
+		os_api_adapter.NewProcessHandler(&os_api_adapter.FakeOsOperations{}, "fake", "args"),
 	)
 	router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
 	router.HandleHTTP(cannedrequests.NewStopRequest().ToHTTPRequest())
@@ -46,7 +46,7 @@ func TestStopServer(t *testing.T) {
 func TestServerStatus(t *testing.T) {
 	router := httprouter.NewHTTPRouter(
 		controls.NewControls(nil),
-		os_api_adapter.NewProcessInvoker(&os_api_adapter.FakeOsOperations{}, "fake", "args"),
+		os_api_adapter.NewProcessHandler(&os_api_adapter.FakeOsOperations{}, "fake", "args"),
 	)
 	router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
 	resp := router.HandleHTTP(cannedrequests.NewStatusRequest().ToHTTPRequest())
@@ -67,7 +67,7 @@ func TestServerStatusWhenServerIsOffline(t *testing.T) {
 func TestServerRunning(t *testing.T) {
 	router := httprouter.NewHTTPRouter(controls.NewControls(
 		rcon.NewStubRCONAdapter()),
-		os_api_adapter.NewProcessInvoker(&os_api_adapter.FakeOsOperations{}, "fake", "args"),
+		os_api_adapter.NewProcessHandler(&os_api_adapter.FakeOsOperations{}, "fake", "args"),
 	)
 	router.HandleHTTP(cannedrequests.NewStartRequest().ToHTTPRequest())
 	resp := router.HandleHTTP(cannedrequests.NewRunningRequest().ToHTTPRequest())
@@ -77,7 +77,7 @@ func TestServerRunning(t *testing.T) {
 func TestServerNotRunning(t *testing.T) {
 	router := httprouter.NewHTTPRouter(
 		controls.NewControls(rcon.NewStubRCONAdapter()),
-		os_api_adapter.NewProcessInvoker(&os_api_adapter.FakeOsOperations{}, "fake", "args"),
+		os_api_adapter.NewProcessHandler(&os_api_adapter.FakeOsOperations{}, "fake", "args"),
 	)
 	resp := router.HandleHTTP(cannedrequests.NewRunningRequest().ToHTTPRequest())
 	assert.Equalf(t, 404, resp.StatusCode, "Server is not running, but running endpoint returned 200")

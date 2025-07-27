@@ -7,17 +7,17 @@ import (
 )
 
 type Controls struct {
-	processInvoker os_api_adapter.Process
+	processHandler os_api_adapter.Process
 	started        bool
 	rcon           rcon.RCONAdapter
 }
 
 // IsStarted implements controls.Controls.
 func (m *Controls) IsStarted() bool {
-	if m.processInvoker == nil {
+	if m.processHandler == nil {
 		return false
 	}
-	return m.processInvoker.Started()
+	return m.processHandler.Started()
 }
 
 func (m *Controls) Status() *rcon.Status {
@@ -30,31 +30,32 @@ func (m *Controls) Status() *rcon.Status {
 }
 
 func (m *Controls) Start(serverProcess os_api_adapter.Process) os_api_adapter.Process {
-	m.processInvoker = serverProcess
+	m.processHandler = serverProcess
 
 	err := serverProcess.Start()
 	if err != nil {
 		return nil
 	}
+
 	pid := serverProcess.PID()
 	ps, err := serverProcess.GetProcessStatus(pid)
+
 	if err != nil {
 		return nil
 	}
 	m.started = ps.Status == windowsconstants.RunningStatus
-
 	return serverProcess
 }
 
 func (m *Controls) Stop() bool {
 	if m.started {
-		err := m.processInvoker.Stop()
+		err := m.processHandler.Stop()
 		if err != nil {
 			return false
 		}
 
 		// Verify process is actually stopped
-		if m.processInvoker.Started() {
+		if m.processHandler.Started() {
 			return false
 		}
 
@@ -67,7 +68,7 @@ func (m *Controls) Stop() bool {
 func NewControls(rcon rcon.RCONAdapter, process ...os_api_adapter.Process) *Controls {
 	controls := &Controls{}
 	if len(process) > 0 {
-		controls.processInvoker = process[0]
+		controls.processHandler = process[0]
 	}
 	controls.rcon = rcon
 	return controls
