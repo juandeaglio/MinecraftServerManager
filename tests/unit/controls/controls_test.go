@@ -1,4 +1,4 @@
-package unit_test
+package controls_test
 
 import (
 	"minecraftremote/src/controls"
