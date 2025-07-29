@@ -2,6 +2,7 @@ package control_server_steps
 
 import (
 	"fmt"
+	"minecraftremote/src/os_api_adapter/real_os_ops"
 	"net/http"
 	"time"
 
@@ -25,7 +26,7 @@ const startURL = constants.BaseURL + port + constants.StartURL
 func ClientStartsServer(s *godog.ScenarioContext) {
 	rconAdapter := rcon.NewMinecraftRCONAdapter()
 	rconAdapter.WithTimeout(1 * time.Second)
-	osOps := &os_api_adapter.WindowsOsOperations{}
+	osOps := &real_os_ops.RealOsOperations{}
 	tc := test_infrastructure.NewTestContext(
 		rconAdapter,
 		os_api_adapter.NewProcessHandler(osOps, "notepad.exe", ""))

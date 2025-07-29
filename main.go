@@ -5,6 +5,7 @@ import (
 	"minecraftremote/src/httprouter"
 	"minecraftremote/src/httprouteradapter"
 	"minecraftremote/src/os_api_adapter"
+	"minecraftremote/src/os_api_adapter/real_os_ops"
 	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
 	"os"
@@ -13,7 +14,7 @@ import (
 )
 
 func main() {
-	osOps := &os_api_adapter.WindowsOsOperations{}
+	osOps := &real_os_ops.RealOsOperations{}
 	newProcess := os_api_adapter.NewProcessHandler(osOps, "notepad.exe", "")
 	mcControls := controls.NewControls(rcon.NewStubRCONAdapter(), newProcess)
 	router := httprouter.NewHTTPRouter(mcControls, newProcess)

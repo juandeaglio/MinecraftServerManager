@@ -1,51 +1,52 @@
 //go:build windows
 
-package os_api_adapter
+package real_os_ops
 
 import (
 	"fmt"
+	"minecraftremote/src/os_api_adapter"
 	"os"
 	"os/exec"
 	"syscall"
 	"unsafe"
 )
 
-// WindowsOsOperations implements OsOperations for Windows
-type WindowsOsOperations struct{}
+// RealOsOperations implements OsOperations for Windows
+type RealOsOperations struct{}
 
-func (w *WindowsOsOperations) FindProcess(pid int) (*os.Process, error) {
+func (w *RealOsOperations) FindProcess(pid int) (*os.Process, error) {
 	return os.FindProcess(pid)
 }
 
-func (w *WindowsOsOperations) Signal(process *os.Process, signal syscall.Signal) error {
+func (w *RealOsOperations) Signal(process *os.Process, signal syscall.Signal) error {
 	return process.Signal(signal)
 }
 
-func (w *WindowsOsOperations) CreateCommand(program string, args ...string) *exec.Cmd {
+func (w *RealOsOperations) CreateCommand(program string, args ...string) *exec.Cmd {
 	return exec.Command(program, args...)
 }
 
-func (w *WindowsOsOperations) SetSysProcAttr(cmd *exec.Cmd) {
+func (w *RealOsOperations) SetSysProcAttr(cmd *exec.Cmd) {
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		CreationFlags: syscall.CREATE_NEW_PROCESS_GROUP,
 		HideWindow:    false,
 	}
 }
 
-func (w *WindowsOsOperations) StartCmd(cmd *exec.Cmd) error {
+func (w *RealOsOperations) StartCmd(cmd *exec.Cmd) error {
 	return cmd.Start()
 }
 
-func (w *WindowsOsOperations) KillProcess(process *os.Process) error {
+func (w *RealOsOperations) KillProcess(process *os.Process) error {
 	return process.Kill()
 }
 
-func (w *WindowsOsOperations) ProcessStatus(pid int) (*ProcessStatus, error) {
+func (w *RealOsOperations) ProcessStatus(pid int) (*os_api_adapter.ProcessStatus, error) {
 	status, err := getStatus(uint32(pid))
 	if err != nil {
 		return nil, err
 	}
-	return &ProcessStatus{
+	return &os_api_adapter.ProcessStatus{
 		Status: status,
 	}, nil
 }
@@ -103,4 +104,4 @@ func getStatusCode(procNtQueryInformationProcess *syscall.LazyProc, handle sysca
 	return pbi, status
 }
 
-var _ OsOperations = (*WindowsOsOperations)(nil)
+var _ os_api_adapter.OsOperations = (*RealOsOperations)(nil)

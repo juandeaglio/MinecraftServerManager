@@ -3,6 +3,7 @@ package server_steps
 import (
 	"fmt"
 	"minecraftremote/src/os_api_adapter"
+	"minecraftremote/src/os_api_adapter/real_os_ops"
 	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
 	"net/http"
@@ -16,7 +17,7 @@ type startServerFeature struct {
 
 func StartServer(s *godog.ScenarioContext) {
 	c := &startServerFeature{}
-	realOsOps := &os_api_adapter.WindowsOsOperations{}
+	realOsOps := &real_os_ops.RealOsOperations{}
 	c.testContext = test_infrastructure.NewTestContext(
 		rcon.NewStubRCONAdapter(),
 		os_api_adapter.NewProcessHandler(realOsOps, "notepad.exe", ""),

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/cucumber/godog"
 	"minecraftremote/src/os_api_adapter"
+	"minecraftremote/src/os_api_adapter/real_os_ops"
 	"minecraftremote/src/rcon"
 	"minecraftremote/src/windowsconstants"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
@@ -15,7 +16,7 @@ type startProcessFeature struct {
 
 func StartProcess(s *godog.ScenarioContext) {
 	c := &startProcessFeature{}
-	osOps := &os_api_adapter.WindowsOsOperations{}
+	osOps := &real_os_ops.RealOsOperations{}
 	c.testContext = test_infrastructure.NewTestContext(
 		rcon.NewStubRCONAdapter(),
 		os_api_adapter.NewProcessHandler(osOps, "notepad.exe", ""),

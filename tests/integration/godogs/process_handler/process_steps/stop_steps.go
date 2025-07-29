@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/cucumber/godog"
 	"minecraftremote/src/os_api_adapter"
+	"minecraftremote/src/os_api_adapter/real_os_ops"
 	"minecraftremote/src/rcon"
 	"minecraftremote/src/windowsconstants"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
@@ -30,7 +31,7 @@ func BeforeScenarioHook(tc *test_infrastructure.TestContext) func(ctx context.Co
 func StopProcess(s *godog.ScenarioContext) {
 	c := &stopProcessFeature{}
 
-	osOps := &os_api_adapter.WindowsOsOperations{}
+	osOps := &real_os_ops.RealOsOperations{}
 	c.testContext = test_infrastructure.NewTestContext(
 		rcon.NewStubRCONAdapter(),
 		os_api_adapter.NewProcessHandler(osOps, "notepad.exe", ""),
