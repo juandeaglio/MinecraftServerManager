@@ -8,6 +8,7 @@ import (
 	"minecraftremote/src/os_api_adapter/real_os_ops"
 	"minecraftremote/src/rcon"
 	"minecraftremote/tests/integration/godogs/test_infrastructure"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -29,15 +30,25 @@ func main() {
 
 	// Cleanup
 	if server != nil {
-		err := server.Close()
-		if err != nil {
-			return
-		}
+		tryCloseServer(server)
 	}
 	if newProcess != nil {
-		err := newProcess.Stop()
-		if err != nil {
-			return
-		}
+		tryStopProcess(newProcess)
 	}
+}
+
+func tryStopProcess(newProcess *os_api_adapter.ProcessImpl) bool {
+	err := newProcess.Stop()
+	if err != nil {
+		return true
+	}
+	return false
+}
+
+func tryCloseServer(server *http.Server) bool {
+	err := server.Close()
+	if err != nil {
+		return true
+	}
+	return false
 }
