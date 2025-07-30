@@ -23,7 +23,10 @@ func (w *RealOsOperations) Signal(process *os.Process, signal syscall.Signal) er
 }
 
 func (w *RealOsOperations) CreateCommand(program string, args ...string) *exec.Cmd {
-	return exec.Command(program, args...)
+	cmd := exec.Command(program, args...)
+	w.SetSysProcAttr(cmd)
+
+	return cmd
 }
 
 func (w *RealOsOperations) SetSysProcAttr(cmd *exec.Cmd) {

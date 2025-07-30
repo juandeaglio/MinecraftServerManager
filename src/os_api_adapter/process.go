@@ -49,7 +49,6 @@ func (p *ProcessImpl) Start() error {
 		return fmt.Errorf("program is empty")
 	}
 	p.cmd = p.osOps.CreateCommand(p.program, p.args...)
-	p.osOps.SetSysProcAttr(p.cmd)
 
 	err := p.osOps.StartCmd(p.cmd)
 	if err != nil {
