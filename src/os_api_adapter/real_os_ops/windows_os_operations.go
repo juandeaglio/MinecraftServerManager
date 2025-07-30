@@ -24,12 +24,12 @@ func (w *RealOsOperations) Signal(process *os.Process, signal syscall.Signal) er
 
 func (w *RealOsOperations) CreateCommand(program string, args ...string) *exec.Cmd {
 	cmd := exec.Command(program, args...)
-	w.SetSysProcAttr(cmd)
+	w.setSysProcAttr(cmd)
 
 	return cmd
 }
 
-func (w *RealOsOperations) SetSysProcAttr(cmd *exec.Cmd) {
+func (w *RealOsOperations) setSysProcAttr(cmd *exec.Cmd) {
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		CreationFlags: syscall.CREATE_NEW_PROCESS_GROUP,
 		HideWindow:    false,

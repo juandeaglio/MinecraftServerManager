@@ -18,7 +18,7 @@ func (b *BrokenOsOperations) CreateCommand(program string, args ...string) *exec
 	return nil
 }
 
-func (b *BrokenOsOperations) SetSysProcAttr(cmd *exec.Cmd) {
+func (b *BrokenOsOperations) setSysProcAttr(cmd *exec.Cmd) {
 }
 
 func (b *BrokenOsOperations) StartCmd(cmd *exec.Cmd) error {

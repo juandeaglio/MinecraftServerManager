@@ -31,9 +31,6 @@ func (f *FakeOsOperations) CreateCommand(program string, args ...string) *exec.C
 	return cmd
 }
 
-func (f *FakeOsOperations) SetSysProcAttr(cmd *exec.Cmd) {
-}
-
 func (f *FakeOsOperations) StartCmd(cmd *exec.Cmd) error {
 	return nil
 }
