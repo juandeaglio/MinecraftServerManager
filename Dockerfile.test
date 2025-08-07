@@ -34,4 +34,4 @@ COPY . .
 # RUN golangci-lint run ./...
 
 # Create interactive session
-CMD ["bash", "-c", "/bin/bash"]
+CMD ["bash", "-c", "make integration-test"]
