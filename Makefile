@@ -1,8 +1,12 @@
 integration-test:
 	go test ./tests/integration/godogs/... -v
+
+linux-test:
 	docker build -f Dockerfile.test -t minecraftremote-test .
 	docker run minecraftremote-test
 
+acceptance-test:
+	go test ./tests/acceptance/... -v
 
 contract-test:
 	go test ./tests/integration/contracts/... -v

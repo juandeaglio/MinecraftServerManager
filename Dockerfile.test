@@ -27,11 +27,5 @@ RUN go mod download
 # Copy the entire project
 COPY . .
 
-# Install Godog for BDD testing
-# RUN go install github.com/cucumber/godog/cmd/godog@latest
-
-# Run linter
-# RUN golangci-lint run ./...
-
 # Create interactive session
-CMD ["bash", "-c", "make integration-test"]
+CMD ["bash", "-c", "make acceptance-test"]
