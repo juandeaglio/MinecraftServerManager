@@ -26,3 +26,4 @@ jobs:
         with:
           push: true
           tags: election6391/minecraftserverremote:latest
+          file: Dockerfile.test
