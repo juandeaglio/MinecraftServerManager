@@ -23,7 +23,7 @@ func ServerStatusScenarioContext(s *godog.ScenarioContext) {
 	osOps := &real_os_ops.RealOsOperations{}
 	tc := test_infrastructure.NewTestContext(
 		rcon.NewStubRCONAdapter(),
-		os_api_adapter.NewProcessHandler(osOps, "notepad.exe", ""),
+		os_api_adapter.NewProcessHandler(osOps, `cmd.exe`, ""),
 	)
 	c := &StatusServerFeature{testContext: tc}
 

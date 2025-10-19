@@ -20,7 +20,7 @@ func StartServer(s *godog.ScenarioContext) {
 	realOsOps := &real_os_ops.RealOsOperations{}
 	c.testContext = test_infrastructure.NewTestContext(
 		rcon.NewStubRCONAdapter(),
-		os_api_adapter.NewProcessHandler(realOsOps, "notepad.exe", ""),
+		os_api_adapter.NewProcessHandler(realOsOps, `cmd.exe`, ""),
 	)
 	s.Before(test_infrastructure.BeforeScenarioHook(c.testContext, "8083"))
 

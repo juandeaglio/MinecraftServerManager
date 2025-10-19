@@ -8,7 +8,7 @@ import (
 )
 
 func TestWindowsRunningProcessContract(t *testing.T) {
-	pc := os_api_adapter.NewProcessHandler(&real_os_ops.RealOsOperations{}, "notepad.exe", "")
+	pc := os_api_adapter.NewProcessHandler(&real_os_ops.RealOsOperations{}, `cmd.exe`, "")
 	err := pc.Start()
 	if err != nil {
 		return
@@ -33,7 +33,7 @@ func TestWindowsRunningProcessContract(t *testing.T) {
 	t.Logf("Process status: %d", ps.Status)
 }
 func TestWindowsProcessNonExistentContract(t *testing.T) {
-	pc := os_api_adapter.NewProcessHandler(&real_os_ops.RealOsOperations{}, "notepad.exe", "")
+	pc := os_api_adapter.NewProcessHandler(&real_os_ops.RealOsOperations{}, `cmd.exe`, "")
 
 	defer func(pc *os_api_adapter.ProcessImpl) {
 		_ = pc.Stop()
@@ -54,7 +54,7 @@ func TestWindowsProcessNonExistentContract(t *testing.T) {
 }
 
 func TestWindowsKilledProcessContract(t *testing.T) {
-	pc := os_api_adapter.NewProcessHandler(&real_os_ops.RealOsOperations{}, "notepad.exe", "")
+	pc := os_api_adapter.NewProcessHandler(&real_os_ops.RealOsOperations{}, `cmd.exe`, "")
 	err := pc.Start()
 	if err != nil {
 		return
