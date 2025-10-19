@@ -19,6 +19,9 @@ all-test: unit-test integration-test contract-test
 build:
 	go mod tidy
 
+serve:
+	echo "Serving!"
+
 # Coverage directory
 coverage-dir:
 	if not exist coverage mkdir coverage
