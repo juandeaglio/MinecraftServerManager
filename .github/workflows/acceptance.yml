@@ -5,7 +5,7 @@ on:
     types: [completed]
 
 jobs:
-  lint:
+  acceptance:
     runs-on: ubuntu-latest
 
     steps:
