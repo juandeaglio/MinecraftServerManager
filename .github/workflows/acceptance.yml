@@ -1,0 +1,13 @@
+name: acceptance.yml
+on:
+  workflow_run:
+    workflows: ['artifact']
+    types: [completed]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
