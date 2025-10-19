@@ -39,16 +39,10 @@ func main() {
 
 func tryStopProcess(newProcess *os_api_adapter.ProcessImpl) bool {
 	err := newProcess.Stop()
-	if err != nil {
-		return true
-	}
-	return false
+	return err != nil
 }
 
 func tryCloseServer(server *http.Server) bool {
 	err := server.Close()
-	if err != nil {
-		return true
-	}
-	return false
+	return err != nil
 }
